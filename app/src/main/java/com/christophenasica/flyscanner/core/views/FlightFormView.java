@@ -34,9 +34,6 @@ public class FlightFormView extends RelativeLayout {
     private TextView mToPickerLabel;
     private EditText mToPickerEditText;
 
-    private final Calendar mLeftPickerCalendar = Calendar.getInstance();
-    private final Calendar mRightPickerCalendar = Calendar.getInstance();
-
     public FlightFormView(Context context) {
         super(context);
         LayoutInflater.from(getContext()).inflate(ID, this, true);
@@ -72,53 +69,49 @@ public class FlightFormView extends RelativeLayout {
     {
         bindViews();
 
-        final DatePickerDialog.OnDateSetListener departureDateSetListener = new DatePickerDialog.OnDateSetListener() {
-            @Override
-            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                mLeftPickerCalendar.set(Calendar.YEAR, year);
-                mLeftPickerCalendar.set(Calendar.MONTH, month);
-                mLeftPickerCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-                updateDateLabel(mFromPickerEditText, mLeftPickerCalendar.getTime());
-            }
-        };
-
-        final DatePickerDialog.OnDateSetListener arrivalDateSetListener = new DatePickerDialog.OnDateSetListener() {
-            @Override
-            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                mRightPickerCalendar.set(Calendar.YEAR, year);
-                mRightPickerCalendar.set(Calendar.MONTH, month);
-                mRightPickerCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-                updateDateLabel(mToPickerEditText, mRightPickerCalendar.getTime());
-            }
-        };
-
-        mFromPickerEditText.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                new DatePickerDialog(getContext(), departureDateSetListener, mLeftPickerCalendar.get(Calendar.YEAR), mLeftPickerCalendar.get(Calendar.MONTH), mLeftPickerCalendar.get(Calendar.DAY_OF_MONTH)).show();
-            }
-        });
-
-        mToPickerEditText.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                new DatePickerDialog(getContext(), arrivalDateSetListener, mRightPickerCalendar.get(Calendar.YEAR), mRightPickerCalendar.get(Calendar.MONTH), mRightPickerCalendar.get(Calendar.DAY_OF_MONTH)).show();
-            }
-        });
+        //other init here
     }
 
-    public Calendar getDeparture() {
-        return mLeftPickerCalendar;
-    }
-
-    public Calendar getArrival() {
-        return mRightPickerCalendar;
-    }
-
-    private void updateDateLabel(EditText dateEditText, Date date) {
+    public void updateDateLabel(EditText dateEditText, Date date) {
         String myFormat = "dd/MM/yy"; //In which you need put here
         SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
 
         dateEditText.setText(sdf.format(date));
+    }
+
+    public TextView getDropdownLabel() {
+        return mDropdownLabel;
+    }
+
+    public Spinner getDropdown() {
+        return mDropdown;
+    }
+
+    public TextView getFromLabel() {
+        return mFromLabel;
+    }
+
+    public Switch getFromToSwitch() {
+        return mFromToSwitch;
+    }
+
+    public TextView getToLabel() {
+        return mToLabel;
+    }
+
+    public TextView getFromPickerLabel() {
+        return mFromPickerLabel;
+    }
+
+    public EditText getFromPickerEditText() {
+        return mFromPickerEditText;
+    }
+
+    public TextView getToPickerLabel() {
+        return mToPickerLabel;
+    }
+
+    public EditText getToPickerEditText() {
+        return mToPickerEditText;
     }
 }
