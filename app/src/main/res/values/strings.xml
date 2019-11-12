@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">FlyScanner</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="from_label">From</string>
+    <string name="to_label">To</string>
+    <string name="airport_label">Airport</string>
+    <string name="departure_label">Departure</string>
+    <string name="arrival_label">Arrival</string>
+    <string name="send_button_label">Search</string>
+</resources>
