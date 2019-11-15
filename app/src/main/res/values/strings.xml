@@ -7,10 +7,10 @@
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
 
-    <string name="from_label">From</string>
-    <string name="to_label">To</string>
-    <string name="airport_label">Airport</string>
     <string name="departure_label">Departure</string>
     <string name="arrival_label">Arrival</string>
+    <string name="airport_label">Airport</string>
+    <string name="start_interval_label">Start</string>
+    <string name="end_interval_label">End</string>
     <string name="send_button_label">Search</string>
 </resources>

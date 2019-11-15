@@ -24,15 +24,17 @@
                 <TextView
                     android:id="@+id/dropDownLabel"
                     android:text="@string/airport_label"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
 
                 <Spinner
                     android:id="@+id/airportDropdown"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:dropDownSelector="@color/colorPrimary"
                     android:layout_below="@+id/dropDownLabel"
-                    android:layout_alignStart="@+id/dropDownLabel"
                     android:spinnerMode="dropdown" />
 
             </RelativeLayout>
@@ -49,7 +51,7 @@
                     android:id="@+id/fromLabel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/from_label" />
+                    android:text="@string/departure_label" />
 
                 <Switch
                     android:id="@+id/fromToSwitch"
@@ -61,7 +63,7 @@
                     android:id="@+id/toLabel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/to_label"
+                    android:text="@string/arrival_label"
                     android:layout_toEndOf="@+id/fromToSwitch" />
 
             </RelativeLayout>
@@ -78,17 +80,17 @@
 
                 <LinearLayout
                     android:id="@+id/leftPickerContainer"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:gravity="center_horizontal"
+                    android:gravity="center"
                     android:orientation="vertical">
 
                     <TextView
                         android:id="@+id/fromPickerLabel"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/departure_label" />
+                        android:text="@string/start_interval_label" />
 
                     <EditText
                         android:id="@+id/fromPicker"
@@ -103,17 +105,16 @@
                 <LinearLayout
                     android:id="@+id/rightPickerContainer"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:layout_marginTop="@dimen/form_separation_padding"
-                    android:gravity="center_horizontal"
+                    android:gravity="center"
                     android:orientation="vertical" >
 
                     <TextView
                         android:id="@+id/toPickerLabel"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/arrival_label" />
+                        android:text="@string/end_interval_label" />
 
                     <EditText
                         android:id="@+id/toPicker"

@@ -8,27 +8,49 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.Spinner;
 import com.christophenasica.flyscanner.R;
 import com.christophenasica.flyscanner.core.AirportManager;
 import com.christophenasica.flyscanner.core.views.FlightFormView;
+import com.christophenasica.flyscanner.data.Airport;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 public class HomeSearchFragment extends Fragment {
 
     private final Calendar mDeparturePickerCalendar = Calendar.getInstance();
     private final Calendar mArrivalPickerCalendar = Calendar.getInstance();
+    private final Calendar mDepartureDatePlus7Calendar = Calendar.getInstance();//todo set this one to disallow more than 7 days pick interval
+
+    private final FormInfos mFormInfos = new FormInfos();
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final FlightFormView rootView = new FlightFormView(getContext());
 
+        if (mFormInfos.icaoFrom == null && mFormInfos.icaoTo == null) {
+            String defaultIcao = AirportManager.getInstance().getAirportList().get(0).getIcao();
+            mFormInfos.icaoFrom = defaultIcao;
+            mFormInfos.icaoTo = defaultIcao;
+        }
+
         rootView.updateDateLabel(rootView.getFromPickerEditText(), Calendar.getInstance().getTime());
         rootView.updateDateLabel(rootView.getToPickerEditText(), Calendar.getInstance().getTime());
+
+        rootView.getFromToSwitch().setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                //String icao = AirportManager.getInstance().getAirportList().get(rootView.getDropdown().getSelectedItemPosition()).getIcao();
+                rootView.getDropdown().setSelection(getDropdownIndexByIcao(isChecked ? mFormInfos.icaoTo : mFormInfos.icaoFrom));
+            }
+        });
 
         final DatePickerDialog.OnDateSetListener departureDateSetListener = new DatePickerDialog.OnDateSetListener() {
             @Override
@@ -37,6 +59,10 @@ public class HomeSearchFragment extends Fragment {
                 mDeparturePickerCalendar.set(Calendar.MONTH, month);
                 mDeparturePickerCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
                 rootView.updateDateLabel(rootView.getFromPickerEditText(), mDeparturePickerCalendar.getTime());
+                if (mArrivalPickerCalendar.getTime().getTime() < mDeparturePickerCalendar.getTime().getTime()) {
+                    mArrivalPickerCalendar.setTime(mDeparturePickerCalendar.getTime());
+                    rootView.updateDateLabel(rootView.getToPickerEditText(), mDeparturePickerCalendar.getTime());
+                }
             }
         };
 
@@ -63,16 +89,54 @@ public class HomeSearchFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(), arrivalDateSetListener, mArrivalPickerCalendar.get(Calendar.YEAR), mArrivalPickerCalendar.get(Calendar.MONTH), mArrivalPickerCalendar.get(Calendar.DAY_OF_MONTH));
-                datePickerDialog.getDatePicker().setMinDate(Calendar.getInstance().getTime().getTime());
+                datePickerDialog.getDatePicker().setMinDate(mDeparturePickerCalendar.getTime().getTime());
+                Calendar datePlus7 = Calendar.getInstance();
+                datePlus7.setTime(mDeparturePickerCalendar.getTime());
+                datePlus7.add(Calendar.DAY_OF_MONTH, 7);
+                datePickerDialog.getDatePicker().setMaxDate(datePlus7.getTime().getTime());
                 datePickerDialog.show();
             }
         });
 
-        Spinner airportSelector = rootView.getDropdown();
+        final Spinner airportSelector = rootView.getDropdown();
         ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(getActivity(), R.layout.support_simple_spinner_dropdown_item, AirportManager.getInstance().getAirportNameList());
         spinnerAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
         airportSelector.setAdapter(spinnerAdapter);
+        airportSelector.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                boolean isCheckedSwitch = rootView.getFromToSwitch().isChecked();
+                String icao = AirportManager.getInstance().getAirportList().get(position).getIcao();
+                if (isCheckedSwitch) {
+                    mFormInfos.icaoTo = icao;
+                }
+                else {
+                    mFormInfos.icaoFrom = icao;
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
 
         return rootView;
+    }
+
+    private int getDropdownIndexByIcao(String icao) {
+        List<Airport> airportsList = AirportManager.getInstance().getAirportList();
+        for (int i=0; i < airportsList.size(); i++) {
+            if (airportsList.get(i).getIcao().contentEquals(icao))
+                return i;
+        }
+        return 0;
+    }
+
+    public static class FormInfos {
+        public String icaoFrom;
+        public String icaoTo;
+
+        public String departureDate;
+        public String arrivalDate;
     }
 }
