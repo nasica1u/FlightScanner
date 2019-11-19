@@ -1,32 +1,40 @@
 package com.christophenasica.flyscanner.core.fragments;
 
 import android.app.DatePickerDialog;
+import android.nfc.Tag;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.Spinner;
 import com.christophenasica.flyscanner.R;
 import com.christophenasica.flyscanner.core.AirportManager;
+import com.christophenasica.flyscanner.core.RequestManager;
+import com.christophenasica.flyscanner.core.Utils;
+import com.christophenasica.flyscanner.core.activities.SearchResultActivity;
 import com.christophenasica.flyscanner.core.views.FlightFormView;
 import com.christophenasica.flyscanner.data.Airport;
+import com.google.gson.JsonArray;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-public class HomeSearchFragment extends Fragment {
+public class HomeSearchFragment extends Fragment implements RequestManager.RequestListener {
+
+    private static final String TAG = HomeSearchFragment.class.getSimpleName();
 
     private final Calendar mDeparturePickerCalendar = Calendar.getInstance();
     private final Calendar mArrivalPickerCalendar = Calendar.getInstance();
-    private final Calendar mDepartureDatePlus7Calendar = Calendar.getInstance();//todo set this one to disallow more than 7 days pick interval
 
     private final FormInfos mFormInfos = new FormInfos();
 
@@ -58,11 +66,15 @@ public class HomeSearchFragment extends Fragment {
                 mDeparturePickerCalendar.set(Calendar.YEAR, year);
                 mDeparturePickerCalendar.set(Calendar.MONTH, month);
                 mDeparturePickerCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-                rootView.updateDateLabel(rootView.getFromPickerEditText(), mDeparturePickerCalendar.getTime());
+                Calendar datePlus7 = HomeSearchFragment.this.getCalendarPlus7Days(mDeparturePickerCalendar);
                 if (mArrivalPickerCalendar.getTime().getTime() < mDeparturePickerCalendar.getTime().getTime()) {
                     mArrivalPickerCalendar.setTime(mDeparturePickerCalendar.getTime());
-                    rootView.updateDateLabel(rootView.getToPickerEditText(), mDeparturePickerCalendar.getTime());
                 }
+                else if (mArrivalPickerCalendar.getTime().getTime() > datePlus7.getTime().getTime()) {
+                    mArrivalPickerCalendar.setTime(datePlus7.getTime());
+                }
+                rootView.updateDateLabel(rootView.getFromPickerEditText(), mDeparturePickerCalendar.getTime());
+                rootView.updateDateLabel(rootView.getToPickerEditText(), mArrivalPickerCalendar.getTime());
             }
         };
 
@@ -90,10 +102,7 @@ public class HomeSearchFragment extends Fragment {
             public void onClick(View v) {
                 DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(), arrivalDateSetListener, mArrivalPickerCalendar.get(Calendar.YEAR), mArrivalPickerCalendar.get(Calendar.MONTH), mArrivalPickerCalendar.get(Calendar.DAY_OF_MONTH));
                 datePickerDialog.getDatePicker().setMinDate(mDeparturePickerCalendar.getTime().getTime());
-                Calendar datePlus7 = Calendar.getInstance();
-                datePlus7.setTime(mDeparturePickerCalendar.getTime());
-                datePlus7.add(Calendar.DAY_OF_MONTH, 7);
-                datePickerDialog.getDatePicker().setMaxDate(datePlus7.getTime().getTime());
+                datePickerDialog.getDatePicker().setMaxDate(getCalendarPlus7Days(mDeparturePickerCalendar).getTime().getTime());
                 datePickerDialog.show();
             }
         });
@@ -120,7 +129,37 @@ public class HomeSearchFragment extends Fragment {
             }
         });
 
+        Button searchButton = rootView.getSearchButton();
+        searchButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //todo request etc
+                /*Airport a = new Airport();
+                a.setCode("12345");
+                a.setCity("Bastia");
+                a.setCountry("France");
+                Airport b = new Airport();
+                b.setCode("12345");
+                b.setCity("Bastia");
+                b.setCountry("France");
+                List<Airport> airports = new ArrayList<>();
+                airports.add(a);
+                airports.add(b);
+                //test
+                SearchResultActivity.startActivity(getActivity(), airports);*/
+                RequestManager.RequestInfos requestInfos = new RequestManager.RequestInfos("EDDF", 1517227200, 1517230800);
+                RequestManager.getInstance().doGetRequestOnFlights(HomeSearchFragment.this, RequestManager.RequestType.DEPARTURE, requestInfos);
+            }
+        });
+
         return rootView;
+    }
+
+    private Calendar getCalendarPlus7Days(Calendar from) {
+        Calendar datePlus7 = Calendar.getInstance();
+        datePlus7.setTime(mDeparturePickerCalendar.getTime());
+        datePlus7.add(Calendar.DAY_OF_MONTH, 7);
+        return datePlus7;
     }
 
     private int getDropdownIndexByIcao(String icao) {
@@ -130,6 +169,18 @@ public class HomeSearchFragment extends Fragment {
                 return i;
         }
         return 0;
+    }
+
+    @Override
+    public void onRequestSuccess(JsonArray jsonArray) {
+        Log.v(TAG, "Request success!"+jsonArray);
+        //todo startActivity
+        SearchResultActivity.startActivity(getActivity(), Utils.convertFlightsJsonArrayToList(jsonArray));
+    }
+
+    @Override
+    public void onRequestFail(String msg) {
+        Log.e(TAG, msg);
     }
 
     public static class FormInfos {

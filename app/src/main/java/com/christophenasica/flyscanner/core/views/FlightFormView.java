@@ -5,6 +5,7 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
@@ -33,6 +34,8 @@ public class FlightFormView extends RelativeLayout {
     private EditText mFromPickerEditText;
     private TextView mToPickerLabel;
     private EditText mToPickerEditText;
+
+    private Button mSearchButton;
 
     public FlightFormView(Context context) {
         super(context);
@@ -63,6 +66,7 @@ public class FlightFormView extends RelativeLayout {
         mFromPickerEditText = findViewById(R.id.fromPicker);
         mToPickerLabel = findViewById(R.id.toPickerLabel);
         mToPickerEditText = findViewById(R.id.toPicker);
+        mSearchButton = findViewById(R.id.searchButton);
     }
 
     private void initView()
@@ -113,5 +117,9 @@ public class FlightFormView extends RelativeLayout {
 
     public EditText getToPickerEditText() {
         return mToPickerEditText;
+    }
+
+    public Button getSearchButton() {
+        return mSearchButton;
     }
 }

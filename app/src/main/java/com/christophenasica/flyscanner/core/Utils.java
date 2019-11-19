@@ -2,9 +2,12 @@ package com.christophenasica.flyscanner.core;
 
 import android.util.Log;
 import com.christophenasica.flyscanner.data.Airport;
+import com.christophenasica.flyscanner.data.Flight;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonNull;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.apache.commons.io.IOUtils;
 
@@ -66,5 +69,24 @@ public class Utils {
             Log.e(TAG, "Can't read text from stream", e);
         }
         return text;
+    }
+
+    public static boolean isStringValid(String str) {
+        return str != null && !str.isEmpty();
+    }
+
+    public static List<Flight> convertFlightsJsonArrayToList(JsonArray jsonArray) {
+        List<Flight> flightList = new ArrayList<>();
+        for (JsonElement element: jsonArray) {
+            JsonObject jsonObject = element.getAsJsonObject();
+            String depAirport = jsonObject.get(Flight.DEPARTURE_AIRPORT) instanceof JsonNull ? "" : jsonObject.get(Flight.DEPARTURE_AIRPORT).getAsString();
+            String arrAirport = jsonObject.get(Flight.ARRIVAL_AIRPORT) instanceof JsonNull ? "" : jsonObject.get(Flight.ARRIVAL_AIRPORT).getAsString();
+            int timeDep = jsonObject.get(Flight.TIME_DEPARTURE) instanceof JsonNull ? -1 : jsonObject.get(Flight.TIME_DEPARTURE).getAsInt();
+            int timeArr = jsonObject.get(Flight.TIME_ARRIVAL) instanceof JsonNull ? -1 : jsonObject.get(Flight.TIME_ARRIVAL).getAsInt();
+            String icao24 = jsonObject.get(Flight.ICAO24) instanceof JsonNull ? "" : jsonObject.get(Flight.ICAO24).getAsString();
+            Flight f = new Flight(depAirport, arrAirport, timeDep, timeArr, icao24);
+            flightList.add(f);
+        }
+        return flightList;
     }
 }

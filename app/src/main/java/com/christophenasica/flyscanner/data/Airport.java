@@ -1,6 +1,10 @@
 package com.christophenasica.flyscanner.data;
 
-public class Airport {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class Airport implements Parcelable {
+
     private String code;
     private String lat;
     private String lon;
@@ -16,6 +20,41 @@ public class Airport {
     private String url;
     private String runway_length;
     private String elev;
+
+    public Airport() {}
+
+    protected Airport(Parcel in) {
+        code = in.readString();
+        lat = in.readString();
+        lon = in.readString();
+        name = in.readString();
+        city = in.readString();
+        state = in.readString();
+        country = in.readString();
+        woeid = in.readString();
+        tz = in.readString();
+        phone = in.readString();
+        type = in.readString();
+        email = in.readString();
+        url = in.readString();
+        runway_length = in.readString();
+        elev = in.readString();
+        icao = in.readString();
+        direct_flights = in.readString();
+        carriers = in.readString();
+    }
+
+    public static final Creator<Airport> CREATOR = new Creator<Airport>() {
+        @Override
+        public Airport createFromParcel(Parcel in) {
+            return new Airport(in);
+        }
+
+        @Override
+        public Airport[] newArray(int size) {
+            return new Airport[size];
+        }
+    };
 
     public String getCode() {
         return code;
@@ -167,5 +206,32 @@ public class Airport {
 
     public String getFormattedName() {
         return code + " - " + city + " " + "(" + country + ")";
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(code);
+        dest.writeString(lat);
+        dest.writeString(lon);
+        dest.writeString(name);
+        dest.writeString(city);
+        dest.writeString(state);
+        dest.writeString(country);
+        dest.writeString(woeid);
+        dest.writeString(tz);
+        dest.writeString(phone);
+        dest.writeString(type);
+        dest.writeString(email);
+        dest.writeString(url);
+        dest.writeString(runway_length);
+        dest.writeString(elev);
+        dest.writeString(icao);
+        dest.writeString(direct_flights);
+        dest.writeString(carriers);
     }
 }

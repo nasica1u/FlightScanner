@@ -132,7 +132,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/form_separation_padding"
-                android:layout_below="@id/pickerContainer"
+                android:layout_alignParentBottom="true"
                 android:text="@string/send_button_label"/>
 
         </RelativeLayout>
