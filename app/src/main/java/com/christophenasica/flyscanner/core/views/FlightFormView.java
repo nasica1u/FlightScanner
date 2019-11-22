@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.Switch;
@@ -22,6 +23,8 @@ import java.util.Locale;
 
 public class FlightFormView extends RelativeLayout {
     private static final int ID = R.layout.flight_form_layout;
+
+    private ProgressBar mLoadingSpinner;
 
     private TextView mDropdownLabel;
     private Spinner mDropdown;
@@ -57,6 +60,7 @@ public class FlightFormView extends RelativeLayout {
 
     private void bindViews()
     {
+        mLoadingSpinner = findViewById(R.id.progress_bar);
         mDropdownLabel = findViewById(R.id.dropDownLabel);
         mDropdown = findViewById(R.id.airportDropdown);
         mFromLabel = findViewById(R.id.fromLabel);
@@ -76,11 +80,8 @@ public class FlightFormView extends RelativeLayout {
         //other init here
     }
 
-    public void updateDateLabel(EditText dateEditText, Date date) {
-        String myFormat = "dd/MM/yy"; //In which you need put here
-        SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
-
-        dateEditText.setText(sdf.format(date));
+    public ProgressBar getLoadingSpinner() {
+        return mLoadingSpinner;
     }
 
     public TextView getDropdownLabel() {

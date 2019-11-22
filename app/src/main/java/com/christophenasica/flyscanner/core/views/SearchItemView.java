@@ -12,7 +12,9 @@ public class SearchItemView extends RelativeLayout {
 
     private static final int ID = R.layout.search_item_view;
 
-    public TextView test;
+    private TextView mFlightName;
+    private TextView mDepAirportName;
+    private TextView mArrAirportName;
 
     public SearchItemView(Context context) {
         super(context);
@@ -30,7 +32,9 @@ public class SearchItemView extends RelativeLayout {
     }
 
     private void bindViews() {
-        test = findViewById(R.id.test);
+        mFlightName = findViewById(R.id.flight_name);
+        mDepAirportName = findViewById(R.id.itemTVDep);
+        mArrAirportName = findViewById(R.id.itemTVArr);
     }
 
     private void initUI() {
@@ -38,5 +42,29 @@ public class SearchItemView extends RelativeLayout {
         bindViews();
 
         //other init
+    }
+
+    public TextView getFlightName() {
+        return mFlightName;
+    }
+
+    public void setFlightName(TextView flightName) {
+        mFlightName = flightName;
+    }
+
+    public TextView getDepAirportName() {
+        return mDepAirportName;
+    }
+
+    public void setDepAirportName(TextView depAirportName) {
+        mDepAirportName = depAirportName;
+    }
+
+    public TextView getArrAirportName() {
+        return mArrAirportName;
+    }
+
+    public void setArrAirportName(TextView arrAirportName) {
+        mArrAirportName = arrAirportName;
     }
 }

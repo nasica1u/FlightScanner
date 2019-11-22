@@ -25,7 +25,7 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Se
 
     @Override
     public void onBindViewHolder(@NonNull SearchViewHolder viewHolder, int position) {
-        viewHolder.searchItemView.test.setText(mFlightsList.get(position).getFlightName());
+        viewHolder.searchItemView.getFlightName().setText(mFlightsList.get(position).getFlightName());
     }
 
     @Override

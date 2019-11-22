@@ -79,12 +79,7 @@ public class Utils {
         List<Flight> flightList = new ArrayList<>();
         for (JsonElement element: jsonArray) {
             JsonObject jsonObject = element.getAsJsonObject();
-            String depAirport = jsonObject.get(Flight.DEPARTURE_AIRPORT) instanceof JsonNull ? "" : jsonObject.get(Flight.DEPARTURE_AIRPORT).getAsString();
-            String arrAirport = jsonObject.get(Flight.ARRIVAL_AIRPORT) instanceof JsonNull ? "" : jsonObject.get(Flight.ARRIVAL_AIRPORT).getAsString();
-            int timeDep = jsonObject.get(Flight.TIME_DEPARTURE) instanceof JsonNull ? -1 : jsonObject.get(Flight.TIME_DEPARTURE).getAsInt();
-            int timeArr = jsonObject.get(Flight.TIME_ARRIVAL) instanceof JsonNull ? -1 : jsonObject.get(Flight.TIME_ARRIVAL).getAsInt();
-            String icao24 = jsonObject.get(Flight.ICAO24) instanceof JsonNull ? "" : jsonObject.get(Flight.ICAO24).getAsString();
-            Flight f = new Flight(depAirport, arrAirport, timeDep, timeArr, icao24);
+            Flight f = new Flight(jsonObject);
             flightList.add(f);
         }
         return flightList;

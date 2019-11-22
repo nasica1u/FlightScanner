@@ -35,7 +35,7 @@ public class RequestManager {
         return requestManager;
     }
 
-    public String get(String sourceUrl, Map<String, String> params) {
+    private String get(String sourceUrl, Map<String, String> params) {
         if (Utils.isStringValid(sourceUrl) && params != null) {
             StringBuilder result = new StringBuilder();
             try {
@@ -93,7 +93,8 @@ public class RequestManager {
      */
     private JsonArray getDeparture(String icao, int begin, int end) {
         Map<String, String> params = getParams(icao, begin, end);
-        return JsonParser.parseString(get(BASE_URL+DEPARTURE_URL, params)).getAsJsonArray();
+        String result = get(BASE_URL+DEPARTURE_URL, params);
+        return Utils.isStringValid(result) ? JsonParser.parseString(result).getAsJsonArray() : null;
     }
 
     private JsonArray getArrival(RequestInfos requestInfos) {
@@ -109,7 +110,8 @@ public class RequestManager {
      */
     private JsonArray getArrival(String icao, int begin, int end) {
         Map<String, String> params = getParams(icao, begin, end);
-        return JsonParser.parseString(get(BASE_URL+ARRIVAL_URL, params)).getAsJsonArray();
+        String result = get(BASE_URL+ARRIVAL_URL, params);
+        return Utils.isStringValid(result) ? JsonParser.parseString(result).getAsJsonArray() : null;
     }
 
     public void doGetRequestOnFlights(RequestListener requestListener, RequestType requestType, RequestInfos requestInfos) {
@@ -169,10 +171,15 @@ public class RequestManager {
         @Override
         protected void onPostExecute(JsonArray result) {
             super.onPostExecute(result);
-            if (result == null)
-                mRequestListener.get().onRequestFail("Your request about " + mRequestType.name() + " has failed: " + mRequestInfos);
-            else
-                mRequestListener.get().onRequestSuccess(result);
+            if (mRequestListener.get() != null) {
+                if (result == null)
+                    mRequestListener.get().onRequestFail("Your request about " + mRequestType.name() + " has failed: " + mRequestInfos);
+                else
+                    mRequestListener.get().onRequestSuccess(result);
+            }
+            else {
+                Log.e(TAG, "Request has abort : user may have left the application during it.");
+            }
         }
     }
 
