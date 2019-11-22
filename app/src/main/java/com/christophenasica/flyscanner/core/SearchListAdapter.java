@@ -25,7 +25,16 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Se
 
     @Override
     public void onBindViewHolder(@NonNull SearchViewHolder viewHolder, int position) {
-        viewHolder.searchItemView.getFlightName().setText(mFlightsList.get(position).getFlightName());
+        SearchItemView view = viewHolder.searchItemView;
+        if (mFlightsList != null && !mFlightsList.isEmpty()) {
+            Flight flight = mFlightsList.get(position);
+            if (flight != null) {
+                view.getFlightName().setText(flight.getFlightName());
+                view.getDepAirportName().setText(flight.getAirportDep());
+                view.getArrAirportName().setText(flight.getAirportArr());
+                view.getFlightTime().setText(flight.getFlightTime() + "");
+            }
+        }
     }
 
     @Override

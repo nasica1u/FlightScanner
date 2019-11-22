@@ -34,6 +34,7 @@
         </RelativeLayout>
 
         <TextView
+            android:id="@+id/flightTime"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true" />
@@ -53,12 +54,17 @@
                 android:id="@+id/itemIVArr"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/itemIVArr"
-                android:src="@drawable/airplane_take_off" />
+                android:layout_below="@id/itemTVArr"
+                android:src="@drawable/airplane_landing" />
 
         </RelativeLayout>
 
 
     </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/background_dark" />
 
 </merge>

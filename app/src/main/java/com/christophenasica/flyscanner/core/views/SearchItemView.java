@@ -15,6 +15,7 @@ public class SearchItemView extends RelativeLayout {
     private TextView mFlightName;
     private TextView mDepAirportName;
     private TextView mArrAirportName;
+    private TextView mFlightTime;
 
     public SearchItemView(Context context) {
         super(context);
@@ -35,6 +36,7 @@ public class SearchItemView extends RelativeLayout {
         mFlightName = findViewById(R.id.flight_name);
         mDepAirportName = findViewById(R.id.itemTVDep);
         mArrAirportName = findViewById(R.id.itemTVArr);
+        mFlightTime = findViewById(R.id.flightTime);
     }
 
     private void initUI() {
@@ -48,23 +50,15 @@ public class SearchItemView extends RelativeLayout {
         return mFlightName;
     }
 
-    public void setFlightName(TextView flightName) {
-        mFlightName = flightName;
-    }
-
     public TextView getDepAirportName() {
         return mDepAirportName;
-    }
-
-    public void setDepAirportName(TextView depAirportName) {
-        mDepAirportName = depAirportName;
     }
 
     public TextView getArrAirportName() {
         return mArrAirportName;
     }
 
-    public void setArrAirportName(TextView arrAirportName) {
-        mArrAirportName = arrAirportName;
+    public TextView getFlightTime() {
+        return mFlightTime;
     }
 }
