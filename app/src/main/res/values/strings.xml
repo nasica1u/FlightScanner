@@ -14,5 +14,7 @@
     <string name="end_interval_label">End</string>
     <string name="send_button_label">Search</string>
 
+    <string name="flight_number_label">Flight n°</string>
+
     <string name="alert_interval_too_big">Interval should not be higher than 7 days</string>
 </resources>

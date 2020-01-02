@@ -114,8 +114,8 @@ public class RequestManager {
         return Utils.isStringValid(result) ? JsonParser.parseString(result).getAsJsonArray() : null;
     }
 
-    public void doGetRequestOnFlights(RequestListener requestListener, RequestType requestType, RequestInfos requestInfos) {
-        new RequestAsyncTask(requestListener, requestType, requestInfos).execute();
+    public void doGetRequestOnFlights(RequestType requestType, RequestInfos requestInfos) {
+        new RequestAsyncTask(requestType, requestInfos).execute();
     }
 
     public static class RequestInfos {
@@ -142,12 +142,10 @@ public class RequestManager {
 
     public static class RequestAsyncTask extends AsyncTask<Void, Void, JsonArray> {
 
-        private WeakReference<RequestListener> mRequestListener;
         private RequestType mRequestType;
         private RequestInfos mRequestInfos;
 
-        public RequestAsyncTask(RequestListener requestListener, RequestType requestType, RequestInfos requestInfos) {
-            mRequestListener = new WeakReference<>(requestListener);
+        public RequestAsyncTask(RequestType requestType, RequestInfos requestInfos) {
             mRequestType = requestType;
             mRequestInfos = requestInfos;
         }
@@ -171,20 +169,7 @@ public class RequestManager {
         @Override
         protected void onPostExecute(JsonArray result) {
             super.onPostExecute(result);
-            if (mRequestListener.get() != null) {
-                if (result == null)
-                    mRequestListener.get().onRequestFail("Your request about " + mRequestType.name() + " has failed: " + mRequestInfos);
-                else
-                    mRequestListener.get().onRequestSuccess(result);
-            }
-            else {
-                Log.e(TAG, "Request has abort : user may have left the application during it.");
-            }
+            Repository.getInstance().getCurrentFlights().postValue(Utils.convertFlightsJsonArrayToList(result));
         }
-    }
-
-    public interface RequestListener {
-        void onRequestSuccess(JsonArray jsonArray);
-        void onRequestFail(String msg);
     }
 }

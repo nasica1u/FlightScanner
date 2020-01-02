@@ -29,15 +29,12 @@ import com.christophenasica.flyscanner.core.activities.SearchResultActivity;
 import com.christophenasica.flyscanner.core.views.FlightFormView;
 import com.christophenasica.flyscanner.data.Airport;
 import com.christophenasica.flyscanner.data.Flight;
-import com.google.gson.JsonArray;
 
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
-public class HomeSearchFragment extends Fragment implements RequestManager.RequestListener {
+public class HomeSearchFragment extends Fragment {
 
     private static final String TAG = HomeSearchFragment.class.getSimpleName();
 
@@ -192,7 +189,7 @@ public class HomeSearchFragment extends Fragment implements RequestManager.Reque
                         int end = (int) (aCalendar.getTimeInMillis() / 1000);
 
                         RequestManager.RequestInfos requestInfos = new RequestManager.RequestInfos(icao, begin, end);
-                        RequestManager.getInstance().doGetRequestOnFlights(HomeSearchFragment.this, requestType, requestInfos);
+                        RequestManager.getInstance().doGetRequestOnFlights(requestType, requestInfos);
                         mMainViewModel.getIsLoading().postValue(true);
                     }
                     else {
@@ -225,21 +222,7 @@ public class HomeSearchFragment extends Fragment implements RequestManager.Reque
     }
 
     private void updateDateLabel(EditText dateEditText, Date date) {
-        String myFormat = "dd/MM/yy"; //In which you need put here
-        SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
-
-        dateEditText.setText(sdf.format(date));
-    }
-
-    @Override
-    public void onRequestSuccess(JsonArray jsonArray) {
-        Log.v(TAG, "Request success!"+jsonArray);
-        mMainViewModel.getCurrentFlights().postValue(Utils.convertFlightsJsonArrayToList(jsonArray));
-    }
-
-    @Override
-    public void onRequestFail(String msg) {
-        Log.e(TAG, msg);
+        dateEditText.setText(Utils.dateToString(date));
     }
 
     public static class SavedInfos {

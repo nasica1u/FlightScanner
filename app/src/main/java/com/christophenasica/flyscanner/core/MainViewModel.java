@@ -1,25 +1,29 @@
 package com.christophenasica.flyscanner.core;
 
+import android.app.Application;
+import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.MutableLiveData;
-import android.arch.lifecycle.ViewModel;
 
 import com.christophenasica.flyscanner.data.Flight;
 
 import java.util.Calendar;
 import java.util.List;
 
-public class MainViewModel extends ViewModel {
+public class MainViewModel extends AndroidViewModel {
+
     private MutableLiveData<Calendar> mDepartureCalendar;
     private MutableLiveData<Calendar> mArrivalCalendar;
 
     private MutableLiveData<List<Flight>> mCurrentFlights;
     private MutableLiveData<Boolean> mIsLoading;
 
-    public MainViewModel() {
-        mDepartureCalendar = new MutableLiveData<>();
-        mArrivalCalendar = new MutableLiveData<>();
-        mCurrentFlights = new MutableLiveData<>();
-        mIsLoading = new MutableLiveData<>();
+    public MainViewModel(Application application) {
+        super(application);
+        Repository repository = Repository.getInstance();
+        mDepartureCalendar = repository.getDepartureCalendar();
+        mArrivalCalendar = repository.getArrivalCalendar();
+        mCurrentFlights = repository.getCurrentFlights();
+        mIsLoading = repository.getIsLoading();
     }
 
     public MutableLiveData<Calendar> getDepartureCalendar() {

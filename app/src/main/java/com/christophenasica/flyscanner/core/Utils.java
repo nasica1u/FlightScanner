@@ -19,8 +19,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.nio.charset.Charset;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class Utils {
 
@@ -89,5 +93,59 @@ public class Utils {
             flightList.add(f);
         }
         return flightList;
+    }
+
+    public static SimpleDateFormat getStandardDateFormat() {
+        String format = "dd/MM/yy";
+        return new SimpleDateFormat(format, Locale.US);
+    }
+
+    public static SimpleDateFormat getCompactDateFormat() {
+        String format = "dd/MM";
+        return new SimpleDateFormat(format, Locale.US);
+    }
+
+    public static String dateToString(Date date) {
+        return dateToString(date, false);
+    }
+
+    public static String dateToString(Date date, boolean compactFormat) {
+        if (compactFormat)
+            return getCompactDateFormat().format(date);
+        return getStandardDateFormat().format(date);
+    }
+
+    public static String timestampToString(int time) {
+        return timestampToString(time, false);
+    }
+
+    public static String timestampToString(int time, boolean compactFormat) {
+        Date date = new Date(time);
+        if (compactFormat)
+            return dateToString(date, true);
+        return dateToString(date);
+    }
+
+    public static String formatFlightDuration(int time) {
+        if (time < 1)
+            return "";
+
+        time = time / 60;
+        int hour = time / 60;
+        int minute = time % 60;
+        StringBuilder duration = new StringBuilder();
+        if (hour > 0) {
+            duration.append(hour).append("h");
+            if (minute < 10) {
+                return duration.append("0").append(minute).toString();
+            }
+            return duration.append(minute).toString();
+        }
+        else {
+            if (minute < 10) {
+                return duration.append("0").append(minute).append("min").toString();
+            }
+            return duration.append(minute).append("min").toString();
+        }
     }
 }
