@@ -95,6 +95,25 @@ public class Utils {
         return flightList;
     }
 
+    public static Airport getAirportByIcao(String icao) {
+        List<Airport> airports = AirportManager.getInstance().getAirportList();
+        for (Airport airport : airports) {
+            if (airport.getIcao().contentEquals(icao))
+                return airport;
+        }
+        return null;
+    }
+
+    public static SimpleDateFormat getDateHourFormat() {
+        String format = "dd/MM/yy HH:mm";
+        return new SimpleDateFormat(format, Locale.US);
+    }
+
+    public static SimpleDateFormat getHourMinuteFormat() {
+        String format = "HH:mm";
+        return new SimpleDateFormat(format, Locale.US);
+    }
+
     public static SimpleDateFormat getStandardDateFormat() {
         String format = "dd/MM/yy";
         return new SimpleDateFormat(format, Locale.US);
@@ -103,6 +122,15 @@ public class Utils {
     public static SimpleDateFormat getCompactDateFormat() {
         String format = "dd/MM";
         return new SimpleDateFormat(format, Locale.US);
+    }
+
+    // Time has to be in ms (otherwise do *1000L)
+    public static String timestampToDateHourString(long time) {
+        return getDateHourFormat().format(new Date(time));
+    }
+
+    public static String timestampToHourMinute(long time) {
+        return getHourMinuteFormat().format(new Date(time));
     }
 
     public static String dateToString(Date date) {
@@ -115,24 +143,24 @@ public class Utils {
         return getStandardDateFormat().format(date);
     }
 
-    public static String timestampToString(int time) {
+    public static String timestampToString(long time) {
         return timestampToString(time, false);
     }
 
-    public static String timestampToString(int time, boolean compactFormat) {
+    public static String timestampToString(long time, boolean compactFormat) {
         Date date = new Date(time);
         if (compactFormat)
             return dateToString(date, true);
         return dateToString(date);
     }
 
-    public static String formatFlightDuration(int time) {
+    public static String formatFlightDuration(long time) {
         if (time < 1)
             return "";
 
         time = time / 60;
-        int hour = time / 60;
-        int minute = time % 60;
+        long hour = time / 60;
+        long minute = time % 60;
         StringBuilder duration = new StringBuilder();
         if (hour > 0) {
             duration.append(hour).append("h");

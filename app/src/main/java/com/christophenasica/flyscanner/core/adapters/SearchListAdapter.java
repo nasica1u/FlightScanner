@@ -1,4 +1,4 @@
-package com.christophenasica.flyscanner.core;
+package com.christophenasica.flyscanner.core.adapters;
 
 import android.graphics.Color;
 import android.support.annotation.NonNull;
@@ -8,13 +8,16 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.christophenasica.flyscanner.R;
+import com.christophenasica.flyscanner.core.ApplicationManager;
+import com.christophenasica.flyscanner.core.Repository;
+import com.christophenasica.flyscanner.core.Utils;
 import com.christophenasica.flyscanner.core.views.SearchItemView;
 import com.christophenasica.flyscanner.data.Flight;
 
 import java.util.List;
 
 public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.SearchViewHolder> {
-    private List<Flight> mFlightsList;
+    private final List<Flight> mFlightsList;
 
     public SearchListAdapter(List<Flight> flights) {
         mFlightsList = flights;
@@ -31,16 +34,27 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Se
     public void onBindViewHolder(@NonNull SearchViewHolder viewHolder, int position) {
         SearchItemView view = viewHolder.searchItemView;
         if (mFlightsList != null && !mFlightsList.isEmpty()) {
-            view.getSeparator().setVisibility(viewHolder.getAdapterPosition() != mFlightsList.size() - 1 ? View.VISIBLE : View.GONE);
+            //view.getSeparator().setVisibility(viewHolder.getAdapterPosition() != mFlightsList.size() - 1 ? View.VISIBLE : View.GONE);
             view.setBackgroundColor(position % 2 == 0 ? ContextCompat.getColor(ApplicationManager.getAppContext(), R.color.colorAccent) : Color.WHITE);
 
-            Flight flight = mFlightsList.get(position);
+            final Flight flight = mFlightsList.get(position);
             if (flight != null) {
-                String flightLabel = ApplicationManager.getAppResources().getString(R.string.flight_number_label) + " " + flight.getFlightName();
+                String flightLabel = ApplicationManager.getAppResources().getString(R.string.flight_number_label) + flight.getFlightName();
                 view.getFlightName().setText(flightLabel);
                 view.getDepAirportName().setText(flight.getAirportDep());
                 view.getArrAirportName().setText(flight.getAirportArr());
+                view.getDepDate().setText(Utils.timestampToString(flight.getDateDep()*1000L));
+                view.getArrDate().setText(Utils.timestampToString(flight.getDateArr()*1000L));
+                view.getDepHour().setText(Utils.timestampToHourMinute(flight.getDateDep()*1000L));
+                view.getArrHour().setText(Utils.timestampToHourMinute(flight.getDateArr()*1000L));
                 view.getFlightTime().setText(Utils.formatFlightDuration(flight.getFlightTime()));
+
+                view.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                    Repository.getInstance().getCurrentFlight().postValue(flight);
+                    }
+                });
             }
         }
     }

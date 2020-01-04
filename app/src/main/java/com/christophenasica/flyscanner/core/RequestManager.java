@@ -56,6 +56,8 @@ public class RequestManager {
                 URL url = new URL(sourceUrl);
                 HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
                 httpURLConnection.setRequestMethod("GET");
+                httpURLConnection.setConnectTimeout(7000);
+                httpURLConnection.setReadTimeout(7000);
                 Log.i(TAG, "Request[GET]: \n"+"URL: "+sourceUrl+"\nNb Param: "+c);
                 BufferedReader reader = new BufferedReader(new InputStreamReader(httpURLConnection.getInputStream()));
                 String line;
@@ -169,7 +171,10 @@ public class RequestManager {
         @Override
         protected void onPostExecute(JsonArray result) {
             super.onPostExecute(result);
-            Repository.getInstance().getCurrentFlights().postValue(Utils.convertFlightsJsonArrayToList(result));
+            if (result != null)
+                Repository.getInstance().getCurrentFlights().postValue(Utils.convertFlightsJsonArrayToList(result));
+            else
+                Repository.getInstance().getIsLoading().postValue(false);
         }
     }
 }

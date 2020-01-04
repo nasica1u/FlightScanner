@@ -1,6 +1,8 @@
 package com.christophenasica.flyscanner.core.fragments;
 
+import android.arch.lifecycle.Observer;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -9,8 +11,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.christophenasica.flyscanner.R;
-import com.christophenasica.flyscanner.core.SearchListAdapter;
-import com.christophenasica.flyscanner.data.Airport;
+import com.christophenasica.flyscanner.core.Repository;
+import com.christophenasica.flyscanner.core.activities.FlightMapActivity;
+import com.christophenasica.flyscanner.core.adapters.SearchListAdapter;
 import com.christophenasica.flyscanner.data.Flight;
 
 import java.util.ArrayList;
@@ -58,6 +61,15 @@ public class SearchResultFragment extends Fragment {
 
         mAdapter = new SearchListAdapter(mFlightsList);
         mRecyclerView.setAdapter(mAdapter);
+
+        Repository.getInstance().getCurrentFlight().observe(this, new Observer<Flight>() {
+            @Override
+            public void onChanged(@Nullable Flight flight) {
+                if (flight != null) {
+                    FlightMapActivity.startActivity(getActivity(), flight);
+                }
+            }
+        });
 
         return v;
     }

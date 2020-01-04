@@ -1,6 +1,12 @@
 package com.christophenasica.flyscanner.core.activities;
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProvider;
+import android.arch.lifecycle.ViewModelProviders;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -9,19 +15,42 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Toast;
 
 import com.christophenasica.flyscanner.R;
+import com.christophenasica.flyscanner.core.ConnectivityViewModel;
+import com.christophenasica.flyscanner.core.NetworkReceiver;
 import com.christophenasica.flyscanner.core.fragments.HomeSearchFragment;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    private NetworkReceiver networkReceiver;
+
+    private ConnectivityViewModel mConnectivityViewModel;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mConnectivityViewModel = ViewModelProviders.of(this).get(ConnectivityViewModel.class);
+        networkReceiver = new NetworkReceiver(mConnectivityViewModel);
+        IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        this.registerReceiver(networkReceiver, filter);
+
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setTitle("");
         setSupportActionBar(toolbar);
+
+        mConnectivityViewModel.getIsConnected().observe(this, new Observer<Boolean>() {
+            @Override
+            public void onChanged(@Nullable Boolean isConnected) {
+                if (isConnected != null && !isConnected) {
+                    Toast.makeText(getBaseContext(), getString(R.string.connection_lost), Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
 
         // Swipe menu
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -93,5 +122,12 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (networkReceiver != null)
+            this.unregisterReceiver(networkReceiver);
     }
 }

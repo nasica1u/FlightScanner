@@ -17,6 +17,10 @@ public class SearchItemView extends RelativeLayout {
     private TextView mDepAirportName;
     private TextView mArrAirportName;
     private TextView mFlightTime;
+    private TextView mDepDate;
+    private TextView mArrDate;
+    private TextView mDepHour;
+    private TextView mArrHour;
 
     private View mSeparator;
 
@@ -40,6 +44,10 @@ public class SearchItemView extends RelativeLayout {
         mDepAirportName = findViewById(R.id.itemTVDep);
         mArrAirportName = findViewById(R.id.itemTVArr);
         mFlightTime = findViewById(R.id.flightTime);
+        mDepDate = findViewById(R.id.itemTVDepDate);
+        mArrDate = findViewById(R.id.itemTVArrDate);
+        mDepHour = findViewById(R.id.itemTVDepHour);
+        mArrHour = findViewById(R.id.itemTVArrHour);
 
         mSeparator = findViewById(R.id.listSeparator);
     }
@@ -63,8 +71,24 @@ public class SearchItemView extends RelativeLayout {
         return mArrAirportName;
     }
 
+    public TextView getDepHour() {
+        return mDepHour;
+    }
+
+    public TextView getArrHour() {
+        return mArrHour;
+    }
+
     public TextView getFlightTime() {
         return mFlightTime;
+    }
+
+    public TextView getDepDate() {
+        return mDepDate;
+    }
+
+    public TextView getArrDate() {
+        return mArrDate;
     }
 
     public View getSeparator() {

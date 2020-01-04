@@ -15,6 +15,10 @@ public class Repository {
     private MutableLiveData<List<Flight>> mCurrentFlights = new MutableLiveData<>();
     private MutableLiveData<Boolean> mIsLoading = new MutableLiveData<>();
 
+    private MutableLiveData<Boolean> mIsConnected = new MutableLiveData<>();
+
+    private MutableLiveData<Flight> mCurrentFlight = new MutableLiveData<>(); // non-tracked
+
     private static Repository mInstance;
 
     public static synchronized Repository getInstance() {
@@ -37,5 +41,13 @@ public class Repository {
 
     public MutableLiveData<Boolean> getIsLoading() {
         return mIsLoading;
+    }
+
+    public MutableLiveData<Boolean> getIsConnected() {
+        return mIsConnected;
+    }
+
+    public MutableLiveData<Flight> getCurrentFlight() {
+        return mCurrentFlight;
     }
 }

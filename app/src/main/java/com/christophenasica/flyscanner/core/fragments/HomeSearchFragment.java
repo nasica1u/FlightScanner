@@ -92,8 +92,10 @@ public class HomeSearchFragment extends Fragment {
         mMainViewModel.getIsLoading().observe(this, new Observer<Boolean>() {
             @Override
             public void onChanged(@Nullable Boolean isLoading) {
-                if (isLoading != null)
+                if (isLoading != null) {
                     rootView.getLoadingSpinner().setVisibility(isLoading ? View.VISIBLE : View.GONE);
+                    rootView.getSearchButton().setEnabled(!isLoading);
+                }
             }
         });
 

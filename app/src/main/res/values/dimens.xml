@@ -9,9 +9,14 @@
     <dimen name="form_margins">16dp</dimen>
     <dimen name="form_separation_padding">16dp</dimen>
 
-    <dimen name="search_item_cell_margin">6dp</dimen>
+    <dimen name="search_item_cell_margin">8dp</dimen>
     <dimen name="search_item_separator_margin">24dp</dimen>
     <dimen name="search_item_airport_name_TS">16sp</dimen>
-    <dimen name="search_item_flight_name_TS">16sp</dimen>
+    <dimen name="search_item_flight_name_TS">18sp</dimen>
     <dimen name="search_item_flight_duration_TS">14sp</dimen>
+    <dimen name="search_item_center_container_margin">16dp</dimen>
+    <dimen name="search_item_flight_date">12sp</dimen>
+    <dimen name="search_item_flight_hour">20sp</dimen>
+    <dimen name="search_flight_icon_size">24dp</dimen>
+    <dimen name="search_flight_icon_side_margin">12dp</dimen>
 </resources>

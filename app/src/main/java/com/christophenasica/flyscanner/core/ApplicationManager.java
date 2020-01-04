@@ -13,7 +13,7 @@ public class ApplicationManager extends Application {
     public void onCreate() {
         super.onCreate();
         mAppContext = getApplicationContext();
-        //todo init should be async
+        //IMPROVEMENT init should be async
         AirportManager.getInstance(); // init airport list
     }
 

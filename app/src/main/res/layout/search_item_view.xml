@@ -7,7 +7,7 @@
     android:paddingEnd="@dimen/search_item_cell_margin">
 
     <RelativeLayout
-        android:id="@+id/central_container"
+        android:id="@+id/cell_central_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true" >
@@ -19,35 +19,79 @@
             android:layout_alignParentStart="true" >
 
             <TextView
+                android:id="@+id/itemTVDepDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/search_item_flight_date" />
+
+            <TextView
                 android:id="@+id/itemTVDep"
                 android:textSize="@dimen/search_item_airport_name_TS"
+                android:layout_below="@+id/itemTVDepDate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
-            <ImageView
-                android:id="@+id/itemIVDep"
+            <TextView
+                android:id="@+id/itemTVDepHour"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/itemTVDep"
-                android:src="@drawable/airplane_take_off" />
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/search_item_flight_hour" />
 
         </RelativeLayout>
 
-        <TextView
-            android:id="@+id/flight_name"
+        <RelativeLayout
+            android:id="@+id/itemCentralContainer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textStyle="bold"
-            android:textSize="@dimen/search_item_flight_name_TS"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true" />
+            android:layout_centerVertical="true"
+            android:layout_toStartOf="@+id/itemRightContainer"
+            android:layout_toEndOf="@+id/itemLeftContainer" >
 
-        <TextView
-            android:id="@+id/flightTime"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="@dimen/search_item_flight_duration_TS"
-            android:layout_centerInParent="true" />
+            <ImageView
+                android:id="@+id/itemIVDep"
+                android:layout_width="@dimen/search_flight_icon_size"
+                android:layout_height="@dimen/search_flight_icon_size"
+                android:layout_toStartOf="@+id/flight_info_container"
+                android:layout_marginEnd="@dimen/search_flight_icon_side_margin"
+                android:layout_centerVertical="true"
+                android:src="@drawable/airplane_take_off" />
+
+            <RelativeLayout
+                android:id="@+id/flight_info_container"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true">
+
+                <TextView
+                    android:id="@+id/flight_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:textStyle="bold"
+                    android:textSize="@dimen/search_item_flight_name_TS" />
+
+                <TextView
+                    android:id="@+id/flightTime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:textSize="@dimen/search_item_flight_duration_TS"
+                    android:layout_below="@id/flight_name" />
+
+            </RelativeLayout>
+
+            <ImageView
+                android:id="@+id/itemIVArr"
+                android:layout_width="@dimen/search_flight_icon_size"
+                android:layout_height="@dimen/search_flight_icon_size"
+                android:layout_toEndOf="@id/flight_info_container"
+                android:layout_marginStart="@dimen/search_flight_icon_side_margin"
+                android:layout_centerVertical="true"
+                android:src="@drawable/airplane_landing" />
+
+        </RelativeLayout>
 
         <RelativeLayout
             android:id="@+id/itemRightContainer"
@@ -56,17 +100,25 @@
             android:layout_alignParentEnd="true" >
 
             <TextView
+                android:id="@+id/itemTVArrDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/search_item_flight_date" />
+
+            <TextView
                 android:id="@+id/itemTVArr"
                 android:textSize="@dimen/search_item_airport_name_TS"
+                android:layout_below="@+id/itemTVArrDate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
-            <ImageView
-                android:id="@+id/itemIVArr"
+            <TextView
+                android:id="@+id/itemTVArrHour"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/itemTVArr"
-                android:src="@drawable/airplane_landing" />
+                android:layout_below="@+id/itemTVArr"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/search_item_flight_hour" />
 
         </RelativeLayout>
 
@@ -78,7 +130,7 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="@android:color/darker_gray"
-        android:layout_below="@id/central_container"
+        android:layout_below="@id/cell_central_container"
         android:paddingTop="@dimen/search_item_cell_margin"
         android:layout_marginStart="@dimen/search_item_separator_margin"
         android:layout_marginEnd="@dimen/search_item_separator_margin"
