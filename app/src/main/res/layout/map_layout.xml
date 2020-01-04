@@ -5,6 +5,7 @@
 
     <Button
         android:id="@+id/showDetails"
+        android:text="@string/button_show_details"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 

@@ -11,7 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.christophenasica.flyscanner.R;
-import com.christophenasica.flyscanner.core.Repository;
+import com.christophenasica.flyscanner.core.viewmodels.Repository;
 import com.christophenasica.flyscanner.core.activities.FlightMapActivity;
 import com.christophenasica.flyscanner.core.adapters.SearchListAdapter;
 import com.christophenasica.flyscanner.data.Flight;

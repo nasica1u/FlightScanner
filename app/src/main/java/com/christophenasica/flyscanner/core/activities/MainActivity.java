@@ -1,7 +1,6 @@
 package com.christophenasica.flyscanner.core.activities;
 
 import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
@@ -15,11 +14,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Toast;
 
 import com.christophenasica.flyscanner.R;
-import com.christophenasica.flyscanner.core.ConnectivityViewModel;
+import com.christophenasica.flyscanner.core.viewmodels.ConnectivityViewModel;
 import com.christophenasica.flyscanner.core.NetworkReceiver;
 import com.christophenasica.flyscanner.core.fragments.HomeSearchFragment;
 

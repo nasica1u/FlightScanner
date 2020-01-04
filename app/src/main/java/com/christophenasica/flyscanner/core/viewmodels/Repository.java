@@ -1,8 +1,9 @@
-package com.christophenasica.flyscanner.core;
+package com.christophenasica.flyscanner.core.viewmodels;
 
 import android.arch.lifecycle.MutableLiveData;
 
 import com.christophenasica.flyscanner.data.Flight;
+import com.christophenasica.flyscanner.data.FlightPath;
 
 import java.util.Calendar;
 import java.util.List;
@@ -18,6 +19,10 @@ public class Repository {
     private MutableLiveData<Boolean> mIsConnected = new MutableLiveData<>();
 
     private MutableLiveData<Flight> mCurrentFlight = new MutableLiveData<>(); // non-tracked
+
+    private MutableLiveData<FlightPath> mCurrentFlightPath = new MutableLiveData<>();
+    private MutableLiveData<Boolean> mIsLoadingAircraftDetails = new MutableLiveData<>();
+    private MutableLiveData<Boolean> mIsAircraftPathUpToDate = new MutableLiveData<>();
 
     private static Repository mInstance;
 
@@ -49,5 +54,17 @@ public class Repository {
 
     public MutableLiveData<Flight> getCurrentFlight() {
         return mCurrentFlight;
+    }
+
+    public MutableLiveData<FlightPath> getCurrentFlightPath() {
+        return mCurrentFlightPath;
+    }
+
+    public MutableLiveData<Boolean> getIsLoadingAircraftDetails() {
+        return mIsLoadingAircraftDetails;
+    }
+
+    public MutableLiveData<Boolean> getIsAircraftPathUpToDate() {
+        return mIsAircraftPathUpToDate;
     }
 }

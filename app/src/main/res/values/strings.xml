@@ -6,7 +6,8 @@
     <string name="nav_header_subtitle">android.studio@android.com</string>
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
-    <string name="button_show_details">Show plane details</string>
+    <string name="button_show_details">Show aircraft details</string>
+    <string name="button_hide_details">Hide aircraft details</string>
 
     <string name="departure_label">Departure</string>
     <string name="arrival_label">Arrival</string>

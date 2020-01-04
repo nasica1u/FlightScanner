@@ -22,7 +22,7 @@ import android.widget.Toast;
 
 import com.christophenasica.flyscanner.R;
 import com.christophenasica.flyscanner.core.AirportManager;
-import com.christophenasica.flyscanner.core.MainViewModel;
+import com.christophenasica.flyscanner.core.viewmodels.MainViewModel;
 import com.christophenasica.flyscanner.core.RequestManager;
 import com.christophenasica.flyscanner.core.Utils;
 import com.christophenasica.flyscanner.core.activities.SearchResultActivity;

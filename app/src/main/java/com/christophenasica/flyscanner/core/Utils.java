@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.christophenasica.flyscanner.data.Airport;
 import com.christophenasica.flyscanner.data.Flight;
+import com.christophenasica.flyscanner.data.FlightPath;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;

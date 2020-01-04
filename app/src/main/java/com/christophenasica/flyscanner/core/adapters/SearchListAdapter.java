@@ -9,7 +9,8 @@ import android.view.ViewGroup;
 
 import com.christophenasica.flyscanner.R;
 import com.christophenasica.flyscanner.core.ApplicationManager;
-import com.christophenasica.flyscanner.core.Repository;
+import com.christophenasica.flyscanner.core.RequestManager;
+import com.christophenasica.flyscanner.core.viewmodels.Repository;
 import com.christophenasica.flyscanner.core.Utils;
 import com.christophenasica.flyscanner.core.views.SearchItemView;
 import com.christophenasica.flyscanner.data.Flight;
@@ -39,7 +40,7 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Se
 
             final Flight flight = mFlightsList.get(position);
             if (flight != null) {
-                String flightLabel = ApplicationManager.getAppResources().getString(R.string.flight_number_label) + flight.getFlightName();
+                String flightLabel = ApplicationManager.getAppResources().getString(R.string.flight_number_label) + flight.getCallsign();
                 view.getFlightName().setText(flightLabel);
                 view.getDepAirportName().setText(flight.getAirportDep());
                 view.getArrAirportName().setText(flight.getAirportArr());
@@ -52,6 +53,8 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Se
                 view.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
+                    RequestManager.RequestInfos requestInfos = new RequestManager.RequestInfos(flight.getFlightName(), flight.getDateArr());
+                    RequestManager.getInstance().doGetRequestOnFlights(RequestManager.RequestType.TRACKS, requestInfos);
                     Repository.getInstance().getCurrentFlight().postValue(flight);
                     }
                 });

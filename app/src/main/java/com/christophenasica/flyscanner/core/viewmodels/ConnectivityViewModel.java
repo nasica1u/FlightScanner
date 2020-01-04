@@ -1,4 +1,4 @@
-package com.christophenasica.flyscanner.core;
+package com.christophenasica.flyscanner.core.viewmodels;
 
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
