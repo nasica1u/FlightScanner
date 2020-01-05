@@ -18,7 +18,7 @@ import com.christophenasica.flyscanner.data.Flight;
 import java.util.List;
 
 public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.SearchViewHolder> {
-    private final List<Flight> mFlightsList;
+    private List<Flight> mFlightsList;
 
     public SearchListAdapter(List<Flight> flights) {
         mFlightsList = flights;
@@ -53,7 +53,7 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Se
                 view.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                    RequestManager.RequestInfos requestInfos = new RequestManager.RequestInfos(flight.getFlightName(), flight.getDateArr());
+                    RequestManager.RequestInfos requestInfos = RequestManager.RequestInfos.initTracksInfos(flight.getFlightName(), flight.getDateArr());
                     RequestManager.getInstance().doGetRequestOnFlights(RequestManager.RequestType.TRACKS, requestInfos);
                     Repository.getInstance().getCurrentFlight().postValue(flight);
                     }

@@ -13,9 +13,11 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.christophenasica.flyscanner.R;
+import com.christophenasica.flyscanner.core.RequestManager;
 import com.christophenasica.flyscanner.core.Utils;
 import com.christophenasica.flyscanner.core.activities.FlightMapActivity;
 import com.christophenasica.flyscanner.core.viewmodels.MapViewModel;
+import com.christophenasica.flyscanner.core.viewmodels.Repository;
 import com.christophenasica.flyscanner.core.views.MapItemView;
 import com.christophenasica.flyscanner.data.Airport;
 import com.christophenasica.flyscanner.data.Flight;
@@ -38,6 +40,7 @@ import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.List;
 
 public class MapFragment extends Fragment {
@@ -79,9 +82,9 @@ public class MapFragment extends Fragment {
         mMapViewModel.getIsLoadingAircraftDetails().observe(this, new Observer<Boolean>() {
             @Override
             public void onChanged(@Nullable Boolean isLoading) {
-                if (isLoading != null) {
-                    mapItemView.getShowDetails().setEnabled(mFlight != null && !isLoading);
-                }
+            if (isLoading != null) {
+                mapItemView.getShowDetails().setEnabled(mFlight != null && !isLoading);
+            }
             }
         });
 
@@ -98,6 +101,20 @@ public class MapFragment extends Fragment {
             public void onClick(View view) {
                 mShowDetails = !mShowDetails;
                 mMapViewModel.getIsLoadingAircraftDetails().postValue(true);
+                if (getActivity() != null && getActivity().getSupportFragmentManager() != null && mFlight != null) {
+                    getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.mapFragmentContainer, new MapInfoFragment()).commit();
+                    RequestManager.RequestInfos requestInfos = RequestManager.RequestInfos.initStatesInfos(mFlight.getFlightName());
+                    RequestManager.getInstance().doGetRequestOnFlights(RequestManager.RequestType.STATES, requestInfos);
+
+                    // Launch request to show list of flights for the aircraft
+                    Calendar today = Calendar.getInstance();
+                    Calendar threeDaysAgo = Calendar.getInstance();
+                    int end = (int) (today.getTimeInMillis() / 1000);
+                    threeDaysAgo.add(Calendar.DAY_OF_WEEK, -3);
+                    int begin = (int) (threeDaysAgo.getTimeInMillis() / 1000);
+                    RequestManager.RequestInfos requestInfos2 = RequestManager.RequestInfos.initHistoryInfos(mFlight.getFlightName(), begin, end);
+                    RequestManager.getInstance().doGetRequestOnFlights(RequestManager.RequestType.FLIGHTS_BY_AIRCRAFT, requestInfos2);
+                }
             }
         });
 
@@ -140,7 +157,7 @@ public class MapFragment extends Fragment {
                             CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, 150);
                             mGoogleMap.animateCamera(cameraUpdate);
 
-                            if (mMapViewModel.getIsAircraftPathUpToDate().getValue() != null && mMapViewModel.getIsAircraftPathUpToDate().getValue()) {
+                            if (mMapViewModel.getIsAircraftPathUpToDate().getValue() != null && !mMapViewModel.getIsAircraftPathUpToDate().getValue()) {
                                 updateAircraftPath();
                             }
                         }
@@ -154,7 +171,7 @@ public class MapFragment extends Fragment {
 
     private void updateAircraftPath() {
         if (mGoogleMap != null && mFlightPath != null) {
-            ArrayList<String[]> path = mFlightPath.getPath();
+            List<String[]> path = mFlightPath.getPath();
             List<LatLng> pathLatLng = new ArrayList<>();
             for (String[] p : path) {
                 try {
@@ -195,5 +212,6 @@ public class MapFragment extends Fragment {
     public void onDestroy() {
         super.onDestroy();
         mMapView.onDestroy();
+        Repository.getInstance().getIsAircraftPathUpToDate().postValue(true);
     }
 }

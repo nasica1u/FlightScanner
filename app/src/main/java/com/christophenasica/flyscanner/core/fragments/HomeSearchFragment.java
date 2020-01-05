@@ -190,7 +190,7 @@ public class HomeSearchFragment extends Fragment {
                         int begin = (int) (dCalendar.getTimeInMillis() / 1000);
                         int end = (int) (aCalendar.getTimeInMillis() / 1000);
 
-                        RequestManager.RequestInfos requestInfos = new RequestManager.RequestInfos(icao, begin, end);
+                        RequestManager.RequestInfos requestInfos = RequestManager.RequestInfos.initSearchInfos(icao, begin, end);
                         RequestManager.getInstance().doGetRequestOnFlights(requestType, requestInfos);
                         mMainViewModel.getIsLoading().postValue(true);
                     }

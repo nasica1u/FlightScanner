@@ -4,6 +4,7 @@ import android.arch.lifecycle.MutableLiveData;
 
 import com.christophenasica.flyscanner.data.Flight;
 import com.christophenasica.flyscanner.data.FlightPath;
+import com.christophenasica.flyscanner.data.FlightState;
 
 import java.util.Calendar;
 import java.util.List;
@@ -23,6 +24,10 @@ public class Repository {
     private MutableLiveData<FlightPath> mCurrentFlightPath = new MutableLiveData<>();
     private MutableLiveData<Boolean> mIsLoadingAircraftDetails = new MutableLiveData<>();
     private MutableLiveData<Boolean> mIsAircraftPathUpToDate = new MutableLiveData<>();
+    private MutableLiveData<FlightState> mCurrentFlightState = new MutableLiveData<>();
+    private MutableLiveData<List<Flight>> mFlightsInfoMenu = new MutableLiveData<>();
+    private MutableLiveData<Boolean> mHasFailedLoadingDirectInfos = new MutableLiveData<>();
+    private MutableLiveData<Boolean> mIsDirectInfosUpToDate = new MutableLiveData<>();
 
     private static Repository mInstance;
 
@@ -66,5 +71,21 @@ public class Repository {
 
     public MutableLiveData<Boolean> getIsAircraftPathUpToDate() {
         return mIsAircraftPathUpToDate;
+    }
+
+    public MutableLiveData<FlightState> getCurrentFlightState() {
+        return mCurrentFlightState;
+    }
+
+    public MutableLiveData<List<Flight>> getFlightsInfoMenu() {
+        return mFlightsInfoMenu;
+    }
+
+    public MutableLiveData<Boolean> getHasFailedLoadingDirectInfos() {
+        return mHasFailedLoadingDirectInfos;
+    }
+
+    public MutableLiveData<Boolean> getIsDirectInfosUpToDate() {
+        return mIsDirectInfosUpToDate;
     }
 }

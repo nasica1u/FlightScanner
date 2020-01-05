@@ -6,6 +6,7 @@ import android.util.Log;
 
 import com.christophenasica.flyscanner.core.viewmodels.Repository;
 import com.christophenasica.flyscanner.data.FlightPath;
+import com.christophenasica.flyscanner.data.FlightState;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -25,11 +26,15 @@ public class RequestManager {
     private static final String DEPARTURE_URL = "/flights/departure";
     private static final String ARRIVAL_URL = "/flights/arrival";
     private static final String TRACKS_URL = "/tracks/all";
+    private static final String STATES_URL = "/states/all";
+    private static final String FLIGHTS_BY_AIRCRAFT_URL = "/flights/aircraft";
 
+    // Departure / Arrival params
     private static final String ICAO = "airport";
     private static final String BEGIN_INTERVAL = "begin";
     private static final String END_INTERVAL = "end";
 
+    // Tracks / States params
     private static final String ICAO24 = "icao24";
     private static final String TIME = "time";
 
@@ -62,8 +67,8 @@ public class RequestManager {
                 URL url = new URL(sourceUrl);
                 HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
                 httpURLConnection.setRequestMethod("GET");
-                httpURLConnection.setConnectTimeout(7000);
-                httpURLConnection.setReadTimeout(7000);
+                httpURLConnection.setConnectTimeout(10000);
+                httpURLConnection.setReadTimeout(10000);
                 Log.i(TAG, "Request[GET]: \n"+"URL: "+sourceUrl+"\nNb Param: "+c);
                 BufferedReader reader = new BufferedReader(new InputStreamReader(httpURLConnection.getInputStream()));
                 String line;
@@ -80,8 +85,8 @@ public class RequestManager {
         return null;
     }
 
-    /* DEPARTURE / ARRIVAL Params */
-    private Map<String, String> getParams(String icao, int begin, int end) {
+    // DEPARTURE / ARRIVAL Params
+    private Map<String, String> getSearchParams(String icao, int begin, int end) {
         Map<String, String> params = new HashMap<>();
         params.put(ICAO, icao);
         params.put(BEGIN_INTERVAL, begin+"");
@@ -89,10 +94,26 @@ public class RequestManager {
         return params;
     }
 
-    private Map<String, String> getParams(String icao24, int time) {
+    private Map<String, String> getHistoryParams(String icao, int begin, int end) {
+        Map<String, String> params = new HashMap<>();
+        params.put(ICAO24, icao);
+        params.put(BEGIN_INTERVAL, begin+"");
+        params.put(END_INTERVAL, end+"");
+        return params;
+    }
+
+    // TRACKS Params
+    private Map<String, String> getTrackParams(String icao24, int time) {
         Map<String, String> params = new HashMap<>();
         params.put(ICAO24, icao24);
         params.put(TIME, time+"");
+        return params;
+    }
+
+    // STATES Params
+    private Map<String, String> getStatesParams(String icao24) {
+        Map<String, String> params = new HashMap<>();
+        params.put(ICAO24, icao24);
         return params;
     }
 
@@ -108,7 +129,7 @@ public class RequestManager {
      * @return See https://opensky-network.org/apidoc/rest.html#departures-by-airport
      */
     private JsonArray getDeparture(String icao, int begin, int end) {
-        Map<String, String> params = getParams(icao, begin, end);
+        Map<String, String> params = getSearchParams(icao, begin, end);
         String result = get(BASE_URL+DEPARTURE_URL, params);
         return Utils.isStringValid(result) ? JsonParser.parseString(result).getAsJsonArray() : null;
     }
@@ -125,25 +146,57 @@ public class RequestManager {
      * @return See https://opensky-network.org/apidoc/rest.html#departures-by-airport
      */
     private JsonArray getArrival(String icao, int begin, int end) {
-        Map<String, String> params = getParams(icao, begin, end);
+        Map<String, String> params = getSearchParams(icao, begin, end);
         String result = get(BASE_URL+ARRIVAL_URL, params);
         return Utils.isStringValid(result) ? JsonParser.parseString(result).getAsJsonArray() : null;
     }
 
     /**
-     * GET /tracks
+     * GET /tracks/all
      * @param icao24 icao of the aircraft
      * @param time Unix time in seconds since epoch, can be any time during the flight (0 means direct informations)
      * @return See https://opensky-network.org/apidoc/rest.html#track-by-aircraft
      */
     private JsonObject getTracks(String icao24, int time) {
-        Map<String, String> params = getParams(icao24, time);
+        Map<String, String> params = getTrackParams(icao24, time);
         String result = get(BASE_URL + TRACKS_URL, params);
         return Utils.isStringValid(result) ? JsonParser.parseString(result).getAsJsonObject() : null;
     }
 
     private JsonObject getTracks(RequestInfos requestInfos) {
         return getTracks(requestInfos.icao24, requestInfos.time);
+    }
+
+    /**
+     * GET /states/all
+     * @param icao24 icao of the aircraft
+     * @return See https://opensky-network.org/apidoc/rest.html#all-state-vectors
+     */
+    private JsonObject getStates(String icao24) {
+        Map<String, String> params = getStatesParams(icao24);
+        String result = get(BASE_URL + STATES_URL, params);
+        return Utils.isStringValid(result) ? JsonParser.parseString(result).getAsJsonObject() : null;
+    }
+
+    private JsonObject getStates(RequestInfos requestInfos) {
+        return getStates(requestInfos.icao24);
+    }
+
+    /**
+     * GET /flights/aircraft
+     * @param icao24 icao of the aircraft
+     * @param begin Start of time interval to retrieve flights for as Unix time (seconds since epoch)
+     * @param end End of time interval to retrieve flights for as Unix time (seconds since epoch)
+     * @return See https://opensky-network.org/apidoc/rest.html#flights-by-aircraft
+     */
+    private JsonArray getFlightsByAircraft(String icao24, int begin, int end) {
+        Map<String, String> params = getHistoryParams(icao24, begin, end);
+        String result = get(BASE_URL+FLIGHTS_BY_AIRCRAFT_URL, params);
+        return Utils.isStringValid(result) ? JsonParser.parseString(result).getAsJsonArray() : null;
+    }
+
+    private JsonArray getFlightsByAircraft(RequestInfos requestInfos) {
+        return getFlightsByAircraft(requestInfos.icao24, requestInfos.begin, requestInfos.end);
     }
 
     public void doGetRequestOnFlights(RequestType requestType, RequestInfos requestInfos) {
@@ -158,26 +211,54 @@ public class RequestManager {
         private String icao24;
         private int time;
 
-        public RequestInfos(String icao, int begin, int end) {
-            this.icao = icao;
-            this.begin = begin;
-            this.end = end;
+        public RequestInfos() {}
+
+        public static RequestInfos initSearchInfos(String icao, int begin, int end) {
+            RequestInfos requestInfos = new RequestInfos();
+            requestInfos.icao = icao;
+            requestInfos.begin = begin;
+            requestInfos.end = end;
+            return requestInfos;
         }
 
-        public RequestInfos(String icao24, int time) {
+        public static RequestInfos initStatesInfos(String icao24) {
+            RequestInfos requestInfos = new RequestInfos();
+            requestInfos.icao24 = icao24;
+            return requestInfos;
+        }
+
+        public static RequestInfos initTracksInfos(String icao24, int time) {
+            RequestInfos requestInfos = new RequestInfos();
+            requestInfos.icao24 = icao24;
+            requestInfos.time = time;
+            return requestInfos;
+        }
+
+        public static RequestInfos initHistoryInfos(String icao24, int begin, int end) {
+            RequestInfos requestInfos = new RequestInfos();
+            requestInfos.icao24 = icao24;
+            requestInfos.begin = begin;
+            requestInfos.end = end;
+            return requestInfos;
+        }
+
+        public RequestInfos(int begin, int end, String icao24) {
             this.icao24 = icao24;
-            this.time = time;
+            this.begin = begin;
+            this.end = end;
         }
 
         @NonNull
         @Override
         public String toString() {
-            return "ICAO: " + icao + "\n BEGIN: " + begin + "\n END: "+end;
+            String coreInfo = "ICAO: " + icao;
+            String additionalInfo = ((begin != -1 && end != -1) ? "\nBEGIN: " + begin + "\nEND: "+end : "") + (time != -1 ? "\nTIME: "+time : "");
+            return  coreInfo + additionalInfo;
         }
     }
 
     public enum RequestType {
-        DEPARTURE, ARRIVAL, TRACKS
+        DEPARTURE, ARRIVAL, TRACKS, STATES, FLIGHTS_BY_AIRCRAFT
     }
 
     public static class RequestAsyncTask extends AsyncTask<Void, Void, Object> {
@@ -202,6 +283,13 @@ public class RequestManager {
                     break;
                 case TRACKS:
                     result = RequestManager.getInstance().getTracks(mRequestInfos);
+                    break;
+                case STATES:
+                    result = RequestManager.getInstance().getStates(mRequestInfos);
+                    break;
+                case FLIGHTS_BY_AIRCRAFT:
+                    result = RequestManager.getInstance().getFlightsByAircraft(mRequestInfos);
+                    break;
                 default:
                     Log.e(TAG, "Request["+mRequestType+"]: request type not found!");
             }
@@ -220,7 +308,19 @@ public class RequestManager {
                         Repository.getInstance().getIsLoading().postValue(false);
                     break;
                 case TRACKS:
-                    Repository.getInstance().getCurrentFlightPath().postValue(new FlightPath((JsonObject) result));
+                    if (result != null)
+                        Repository.getInstance().getCurrentFlightPath().postValue(new FlightPath((JsonObject) result));
+                    break;
+                case STATES:
+                    if (result != null)
+                        Repository.getInstance().getCurrentFlightState().postValue(new FlightState((JsonObject) result));
+                    else
+                        Repository.getInstance().getHasFailedLoadingDirectInfos().postValue(true);
+                    break;
+                case FLIGHTS_BY_AIRCRAFT:
+                    if (result != null)
+                        Repository.getInstance().getFlightsInfoMenu().postValue(Utils.convertFlightsJsonArrayToList((JsonArray) result));
+                    break;
                 default:
                     Log.e(TAG, "Request["+mRequestType+"]: request type not found!");
             }

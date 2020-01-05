@@ -65,9 +65,9 @@ public class SearchResultFragment extends Fragment {
         Repository.getInstance().getCurrentFlight().observe(this, new Observer<Flight>() {
             @Override
             public void onChanged(@Nullable Flight flight) {
-                if (flight != null) {
-                    FlightMapActivity.startActivity(getActivity(), flight);
-                }
+            if (flight != null) {
+                FlightMapActivity.startActivity(getActivity(), flight);
+            }
             }
         });
 

@@ -6,6 +6,7 @@ import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class FlightPath {
 
@@ -19,12 +20,12 @@ public class FlightPath {
     private int startTime;
     private int endTime;
     private String callsign;
-    private ArrayList<String[]> path;
+    private List<String[]> path;
 
     public FlightPath(JsonObject jsonObject) {
         icao24 = jsonObject.get(ICAO24) instanceof JsonNull ? "" : jsonObject.get(ICAO24).getAsString();
-        startTime = jsonObject.get(START_TIME) instanceof JsonNull ? 0 : jsonObject.get(START_TIME).getAsInt();
-        endTime = jsonObject.get(END_TIME) instanceof JsonNull ? 0 : jsonObject.get(END_TIME).getAsInt();
+        startTime = jsonObject.get(START_TIME) instanceof JsonNull ? -1 : jsonObject.get(START_TIME).getAsInt();
+        endTime = jsonObject.get(END_TIME) instanceof JsonNull ? -1 : jsonObject.get(END_TIME).getAsInt();
         callsign = jsonObject.get(CALLSIGN) instanceof JsonNull ? "" : jsonObject.get(CALLSIGN).getAsString();
         JsonArray jsonArray = jsonObject.get(PATH) instanceof JsonNull ? null : jsonObject.get(PATH).getAsJsonArray();
         if (jsonArray != null) {
@@ -33,12 +34,9 @@ public class FlightPath {
                 if (jsonElement instanceof JsonArray) {
                     JsonArray nestedArray = (JsonArray) jsonElement;
                     String[] array = new String[6];
-                    array[0] = nestedArray.get(0) instanceof JsonNull ? "" : nestedArray.get(0).getAsString();
-                    array[1] = nestedArray.get(1) instanceof JsonNull ? "" : nestedArray.get(1).getAsString();
-                    array[2] = nestedArray.get(2) instanceof JsonNull ? "" : nestedArray.get(2).getAsString();
-                    array[3] = nestedArray.get(3) instanceof JsonNull ? "" : nestedArray.get(3).getAsString();
-                    array[4] = nestedArray.get(4) instanceof JsonNull ? "" : nestedArray.get(4).getAsString();
-                    array[5] = nestedArray.get(5) instanceof JsonNull ? "" : nestedArray.get(5).getAsString();
+                    for (int i = 0; i < array.length; i++) {
+                        array[i] = nestedArray.get(i) instanceof JsonNull ? "" : nestedArray.get(i).getAsString();
+                    }
                     path.add(array);
                 }
             }
@@ -61,7 +59,7 @@ public class FlightPath {
         return callsign;
     }
 
-    public ArrayList<String[]> getPath() {
+    public List<String[]> getPath() {
         return path;
     }
 }

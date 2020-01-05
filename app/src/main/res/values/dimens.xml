@@ -19,4 +19,8 @@
     <dimen name="search_item_flight_hour">20sp</dimen>
     <dimen name="search_flight_icon_size">24dp</dimen>
     <dimen name="search_flight_icon_side_margin">12dp</dimen>
+
+    <dimen name="flight_info_menu">30dp</dimen>
+    <dimen name="flight_info_menu_expanded_default_height">200dp</dimen>
+    <dimen name="flight_info_menu_expanded_margin_bottom">60dp</dimen>
 </resources>
