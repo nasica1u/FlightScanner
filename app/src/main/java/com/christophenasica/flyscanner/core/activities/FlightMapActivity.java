@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.christophenasica.flyscanner.R;
+import com.christophenasica.flyscanner.core.NavigationUtils;
 import com.christophenasica.flyscanner.core.fragments.MapFragment;
 import com.christophenasica.flyscanner.core.fragments.SearchResultFragment;
 import com.christophenasica.flyscanner.data.Flight;

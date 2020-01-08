@@ -26,4 +26,12 @@
     <string name="flight_not_found">Flight not found.</string>
 
     <string name="flight_no_direct_info">No direct information available</string>
+
+    <string name="flight_direct_name">Flight n°%1$s</string>
+    <string name="flight_direct_altitude">Altitude : %1$s m</string>
+    <string name="flight_direct_speed">Speed : %1$s km/h</string>
+    <string name="flight_direct_state">State : %1$s</string>
+
+    <string name="flight_climb_txt">Climbing</string>
+    <string name="flight_descends_txt">Descends</string>
 </resources>

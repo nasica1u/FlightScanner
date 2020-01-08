@@ -1,6 +1,7 @@
 package com.christophenasica.flyscanner.core.fragments;
 
 import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -11,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.christophenasica.flyscanner.R;
+import com.christophenasica.flyscanner.core.viewmodels.MainViewModel;
 import com.christophenasica.flyscanner.core.viewmodels.Repository;
 import com.christophenasica.flyscanner.core.activities.FlightMapActivity;
 import com.christophenasica.flyscanner.core.adapters.SearchListAdapter;
@@ -28,24 +30,16 @@ public class SearchResultFragment extends Fragment {
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
 
-    private List<Flight> mFlightsList;
+    private List<Flight> mFlightsList = new ArrayList<>();
+
+    private MainViewModel mMainViewModel;
 
     public SearchResultFragment() {}
-
-    public static SearchResultFragment newResultFragment(List<Flight> flights) {
-        SearchResultFragment fragment = new SearchResultFragment();
-        Bundle args = new Bundle();
-        args.putParcelableArrayList(FLIGHTS_PARAM, (ArrayList<Flight>) flights);
-        fragment.setArguments(args);
-        return fragment;
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mFlightsList = getArguments().getParcelableArrayList(FLIGHTS_PARAM);
-        }
+        mMainViewModel = ViewModelProviders.of(this).get(MainViewModel.class);
     }
 
     @Override
@@ -68,6 +62,17 @@ public class SearchResultFragment extends Fragment {
             if (flight != null) {
                 FlightMapActivity.startActivity(getActivity(), flight);
             }
+            }
+        });
+
+        mMainViewModel.getCurrentFlights().observe(this, new Observer<List<Flight>>() {
+            @Override
+            public void onChanged(@Nullable List<Flight> flights) {
+                if (flights != null) {
+                    mFlightsList.clear();
+                    mFlightsList.addAll(flights);
+                    mAdapter.notifyDataSetChanged();
+                }
             }
         });
 

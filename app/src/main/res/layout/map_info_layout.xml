@@ -1,9 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent">
-    <com.google.android.gms.maps.MapView
-        android:id="@+id/mapView"
+
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent" >
+
+        <ScrollView
+            android:id="@+id/directInfosScroll"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:visibility="gone"
+            android:fillViewport="true" >
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/colorAccent"
+                android:layout_marginBottom="@dimen/flight_info_menu_separator_offset"
+                android:padding="@dimen/flight_info_menu_paddings" >
+
+                <TextView
+                    android:id="@+id/currentFlightNameTV"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/flight_info_menu_title_ts"
+                    android:gravity="center_horizontal" />
+
+                <TextView
+                    android:id="@+id/currentFlightSpeedTV"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/flight_info_menu_text_ts"
+                    android:layout_marginBottom="@dimen/flight_info_menu_tv_bottom_margin"
+                    android:layout_below="@id/currentFlightNameTV" />
+
+                <TextView
+                    android:id="@+id/currentFlightAltitudeTV"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/flight_info_menu_text_ts"
+                    android:layout_marginBottom="@dimen/flight_info_menu_tv_bottom_margin"
+                    android:layout_below="@id/currentFlightSpeedTV" />
+
+                <TextView
+                    android:id="@+id/currentFlightStateTV"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/flight_info_menu_text_ts"
+                    android:layout_marginBottom="@dimen/flight_info_menu_tv_bottom_margin"
+                    android:layout_below="@+id/currentFlightAltitudeTV" />
+
+            </RelativeLayout>
+
+        </ScrollView>
+
+        <com.google.android.gms.maps.MapView
+            android:id="@+id/mapView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/directInfosScroll" />
+
+    </RelativeLayout>
 
     <RelativeLayout
         android:id="@+id/expandable_menu"
@@ -25,6 +82,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="end|bottom"
         android:src="@drawable/ic_line_24dp"
+        android:tint="@color/colorPrimaryDark"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="@dimen/flight_info_menu_expanded_margin_bottom" />
 

@@ -1,10 +1,8 @@
 package com.christophenasica.flyscanner.core.fragments;
 
 import android.app.Activity;
-import android.app.Application;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -12,15 +10,15 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
-import android.view.Display;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.Toast;
 
 import com.christophenasica.flyscanner.R;
 import com.christophenasica.flyscanner.core.ApplicationManager;
+import com.christophenasica.flyscanner.core.Utils;
 import com.christophenasica.flyscanner.core.adapters.FlightInfosAdapter;
 import com.christophenasica.flyscanner.core.viewmodels.MapViewModel;
 import com.christophenasica.flyscanner.core.views.MapInfoView;
@@ -38,6 +36,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MapInfoFragment extends Fragment {
+
+    private static final String TAG = MapInfoFragment.class.getSimpleName();
 
     private MapViewModel mMapViewModel;
     private MapView mMapView;
@@ -85,14 +85,27 @@ public class MapInfoFragment extends Fragment {
         mMapViewModel.getCurrentFlightState().observe(this, new Observer<FlightState>() {
             @Override
             public void onChanged(@Nullable FlightState flightState) {
+                mFlightState = flightState;
                 if (flightState != null) {
-                    mFlightState = flightState;
-                    if (mFlightState.getStates() == null)
+                    if (mFlightState.getStates() == null) {
                         Toast.makeText(getContext(), R.string.flight_no_direct_info, Toast.LENGTH_SHORT).show();
-                    updateDirectInfos();
-                }
-                else {
-                    Toast.makeText(getContext(), R.string.flight_no_direct_info, Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    String[] states = updateDirectInfos(); // Map update
+
+                    if (states != null) {
+                        view.getFlightName().setText(getString(R.string.flight_direct_name, states[FlightState.CALLSIGN]));
+                        view.getFlightAltitude().setText(getString(R.string.flight_direct_altitude, states[FlightState.ALTITUDE]));
+                        view.getFlightSpeed().setText(getString(R.string.flight_direct_speed, Utils.msStringToKmh(states[FlightState.VELOCITY])+""));
+                        float verticalSpeed = 0;
+                        try {
+                            verticalSpeed = Float.parseFloat(states[FlightState.VERTICAL_RATE]);
+                        }
+                        catch (NumberFormatException e) { Log.e(TAG, e.getMessage()); }
+                        view.getFlightState().setText(getString(R.string.flight_direct_state, verticalSpeed > 0 ? getString(R.string.flight_climb_txt) : getString(R.string.flight_descends_txt)));
+
+                        view.getInfoScrollView().setVisibility(View.VISIBLE);
+                    }
                 }
             }
         });
@@ -135,18 +148,21 @@ public class MapInfoFragment extends Fragment {
         return view;
     }
 
-    public void updateDirectInfos() {
+    public String[] updateDirectInfos() {
         if (mGoogleMap != null && mFlightState != null && mFlightState.getStates() != null) {
             String[] states = mFlightState.getStates().get(0);
-            LatLng latLng = new LatLng(Float.parseFloat(states[6]), Float.parseFloat(states[5]));
-            mGoogleMap.addMarker(new MarkerOptions().position(latLng).icon(BitmapDescriptorFactory.fromResource(R.drawable.airplane)).title(states[1]));
+            LatLng latLng = new LatLng(Float.parseFloat(states[FlightState.LATITUDE]), Float.parseFloat(states[FlightState.LONGITUDE]));
+            mGoogleMap.addMarker(new MarkerOptions().position(latLng).icon(BitmapDescriptorFactory.fromResource(R.drawable.airplane)).title(states[FlightState.CALLSIGN]));
             mGoogleMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
 
             mMapViewModel.getIsDirectInfosUpToDate().postValue(true);
+
+            return states;
         }
         else {
             mMapViewModel.getIsDirectInfosUpToDate().postValue(false);
         }
+        return null;
     }
 
     @Override

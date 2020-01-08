@@ -19,8 +19,15 @@
     <dimen name="search_item_flight_hour">20sp</dimen>
     <dimen name="search_flight_icon_size">24dp</dimen>
     <dimen name="search_flight_icon_side_margin">12dp</dimen>
+    
+    <dimen name="flight_detail_button_show_info_side_margins">32dp</dimen>
 
-    <dimen name="flight_info_menu">30dp</dimen>
+    <dimen name="flight_info_menu_paddings">8dp</dimen>
+    <dimen name="flight_info_menu_separator_offset">1dp</dimen>
+    <dimen name="flight_info_menu_title_ts">16sp</dimen>
+    <dimen name="flight_info_menu_text_ts">13sp</dimen>
+    <dimen name="flight_info_menu_tv_bottom_margin">4dp</dimen>
+    <dimen name="flight_info_menu_bottom_margin">8dp</dimen>
     <dimen name="flight_info_menu_expanded_default_height">200dp</dimen>
     <dimen name="flight_info_menu_expanded_margin_bottom">60dp</dimen>
 </resources>

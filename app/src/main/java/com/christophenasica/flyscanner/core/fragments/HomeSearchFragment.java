@@ -84,7 +84,7 @@ public class HomeSearchFragment extends Fragment {
             public void onChanged(@Nullable List<Flight> flights) {
                 if (flights != null) {
                     mMainViewModel.getIsLoading().postValue(false);
-                    SearchResultActivity.startActivity(getActivity(), flights);
+                    SearchResultActivity.startActivity(getActivity());
                 }
             }
         });

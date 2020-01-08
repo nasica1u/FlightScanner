@@ -9,6 +9,8 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
+import android.widget.TextView;
 
 import com.christophenasica.flyscanner.R;
 import com.google.android.gms.maps.MapView;
@@ -21,6 +23,12 @@ public class MapInfoView extends RelativeLayout {
     private RelativeLayout mExpandableMenu;
     private RecyclerView mRecyclerView;
     private FloatingActionButton mExpandCollapseButton;
+    private ScrollView mInfoScrollView;
+
+    private TextView mFlightName;
+    private TextView mFlightAltitude;
+    private TextView mFlightSpeed;
+    private TextView mFlightState;
 
     public MapInfoView(Context context) {
         super(context);
@@ -42,6 +50,12 @@ public class MapInfoView extends RelativeLayout {
         mExpandableMenu = findViewById(R.id.expandable_menu);
         mRecyclerView = findViewById(R.id.expandable_menu_recycler);
         mExpandCollapseButton = findViewById(R.id.expandCollapseButton);
+        mInfoScrollView = findViewById(R.id.directInfosScroll);
+
+        mFlightName = findViewById(R.id.currentFlightNameTV);
+        mFlightAltitude = findViewById(R.id.currentFlightAltitudeTV);
+        mFlightSpeed = findViewById(R.id.currentFlightSpeedTV);
+        mFlightState = findViewById(R.id.currentFlightStateTV);
     }
 
     private void initUI() {
@@ -84,5 +98,25 @@ public class MapInfoView extends RelativeLayout {
 
     public FloatingActionButton getExpandCollapseButton() {
         return mExpandCollapseButton;
+    }
+
+    public ScrollView getInfoScrollView() {
+        return mInfoScrollView;
+    }
+
+    public TextView getFlightName() {
+        return mFlightName;
+    }
+
+    public TextView getFlightAltitude() {
+        return mFlightAltitude;
+    }
+
+    public TextView getFlightSpeed() {
+        return mFlightSpeed;
+    }
+
+    public TextView getFlightState() {
+        return mFlightState;
     }
 }

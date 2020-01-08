@@ -1,18 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <Button
         android:id="@+id/showDetails"
         android:text="@string/button_show_details"
+        android:textAllCaps="false"
+        android:layout_gravity="top"
+        android:layout_marginStart="@dimen/flight_detail_button_show_info_side_margins"
+        android:layout_marginEnd="@dimen/flight_detail_button_show_info_side_margins"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
     <com.google.android.gms.maps.MapView
         android:id="@+id/mapView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/showDetails" />
+        android:layout_height="match_parent" />
 
-</RelativeLayout>
+</FrameLayout>

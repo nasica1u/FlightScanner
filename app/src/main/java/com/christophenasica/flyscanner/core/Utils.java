@@ -177,4 +177,15 @@ public class Utils {
             return duration.append(minute).append("min").toString();
         }
     }
+
+    public static int msStringToKmh(String ms) {
+        int kmh = 0;
+        try {
+            kmh = (int) (Float.parseFloat(ms) * 3.6f);
+        }
+        catch (NumberFormatException e) {
+            Log.e(TAG, e.getMessage());
+        }
+        return kmh;
+    }
 }

@@ -7,6 +7,7 @@ import android.support.v4.app.FragmentManager;
 import android.view.View;
 
 import com.christophenasica.flyscanner.R;
+import com.christophenasica.flyscanner.core.NavigationUtils;
 import com.christophenasica.flyscanner.core.fragments.SearchResultFragment;
 import com.christophenasica.flyscanner.data.Flight;
 
@@ -17,11 +18,8 @@ public class SearchResultActivity extends BaseNavbarActivity {
 
     private static final int ID = R.layout.search_result_activity_layout;
 
-    public static void startActivity(Activity from, List<Flight> flights) {
+    public static void startActivity(Activity from) {
         Intent intent = new Intent(from, SearchResultActivity.class);
-        if (flights != null) {
-            intent.putParcelableArrayListExtra(SearchResultFragment.FLIGHTS_PARAM, (ArrayList<Flight>) flights);
-        }
         from.startActivity(intent);
     }
 
@@ -39,9 +37,8 @@ public class SearchResultActivity extends BaseNavbarActivity {
             }
         });
 
-        ArrayList<Flight> flightArrayList = getIntent().getParcelableArrayListExtra(SearchResultFragment.FLIGHTS_PARAM);
         FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction().add(R.id.searchFragmentContainer, SearchResultFragment.newResultFragment(flightArrayList)).commit();
+        fragmentManager.beginTransaction().add(R.id.searchFragmentContainer, new SearchResultFragment()).commit();
     }
 
     @Override
