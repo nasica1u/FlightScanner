@@ -9,6 +9,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -91,21 +92,7 @@ public class MapInfoFragment extends Fragment {
                         Toast.makeText(getContext(), R.string.flight_no_direct_info, Toast.LENGTH_SHORT).show();
                         return;
                     }
-                    String[] states = updateDirectInfos(); // Map update
-
-                    if (states != null) {
-                        view.getFlightName().setText(getString(R.string.flight_direct_name, states[FlightState.CALLSIGN]));
-                        view.getFlightAltitude().setText(getString(R.string.flight_direct_altitude, states[FlightState.ALTITUDE]));
-                        view.getFlightSpeed().setText(getString(R.string.flight_direct_speed, Utils.msStringToKmh(states[FlightState.VELOCITY])+""));
-                        float verticalSpeed = 0;
-                        try {
-                            verticalSpeed = Float.parseFloat(states[FlightState.VERTICAL_RATE]);
-                        }
-                        catch (NumberFormatException e) { Log.e(TAG, e.getMessage()); }
-                        view.getFlightState().setText(getString(R.string.flight_direct_state, verticalSpeed > 0 ? getString(R.string.flight_climb_txt) : getString(R.string.flight_descends_txt)));
-
-                        view.getInfoScrollView().setVisibility(View.VISIBLE);
-                    }
+                    updateDirectInfos(view); // Map update
                 }
             }
         });
@@ -138,7 +125,7 @@ public class MapInfoFragment extends Fragment {
                     @Override
                     public void onMapLoaded() {
                         if (mMapViewModel.getIsDirectInfosUpToDate().getValue() != null && !mMapViewModel.getIsDirectInfosUpToDate().getValue()) {
-                            updateDirectInfos();
+                            updateDirectInfos(view); // Map update
                         }
                     }
                 });
@@ -148,7 +135,7 @@ public class MapInfoFragment extends Fragment {
         return view;
     }
 
-    public String[] updateDirectInfos() {
+    private void updateDirectInfos(MapInfoView view) {
         if (mGoogleMap != null && mFlightState != null && mFlightState.getStates() != null) {
             String[] states = mFlightState.getStates().get(0);
             LatLng latLng = new LatLng(Float.parseFloat(states[FlightState.LATITUDE]), Float.parseFloat(states[FlightState.LONGITUDE]));
@@ -157,12 +144,23 @@ public class MapInfoFragment extends Fragment {
 
             mMapViewModel.getIsDirectInfosUpToDate().postValue(true);
 
-            return states;
+            //View Infos update
+            view.getFlightName().setText(getString(R.string.flight_direct_name, states[FlightState.CALLSIGN]));
+            view.getFlightAltitude().setText(Html.fromHtml(getString(R.string.flight_direct_altitude, states[FlightState.ALTITUDE])));
+            view.getFlightSpeed().setText(Html.fromHtml(getString(R.string.flight_direct_speed, Utils.msStringToKmh(states[FlightState.VELOCITY])+"")));
+            float verticalSpeed = 0;
+            try {
+                verticalSpeed = Float.parseFloat(states[FlightState.VERTICAL_RATE]);
+            }
+            catch (NumberFormatException e) { Log.e(TAG, e.getMessage()); }
+            view.getFlightState().setText(Html.fromHtml(getString(R.string.flight_direct_state, verticalSpeed > 0 ? getString(R.string.flight_climb_txt) : getString(R.string.flight_descends_txt))));
+
+            view.getInfoScrollView().setVisibility(View.VISIBLE);
+            view.getInfoShadow().setVisibility(View.VISIBLE);
         }
         else {
             mMapViewModel.getIsDirectInfosUpToDate().postValue(false);
         }
-        return null;
     }
 
     @Override

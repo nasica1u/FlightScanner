@@ -102,7 +102,7 @@ public class MapFragment extends Fragment {
                 mShowDetails = !mShowDetails;
                 mMapViewModel.getIsLoadingAircraftDetails().postValue(true);
                 if (getActivity() != null && getActivity().getSupportFragmentManager() != null && mFlight != null) {
-                    getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.mapFragmentContainer, new MapInfoFragment()).commit();
+                    getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.searchFragmentContainer, new MapInfoFragment()).addToBackStack(null).commit();
                     RequestManager.RequestInfos requestInfos = RequestManager.RequestInfos.initStatesInfos(mFlight.getFlightName());
                     RequestManager.getInstance().doGetRequestOnFlights(RequestManager.RequestType.STATES, requestInfos);
 

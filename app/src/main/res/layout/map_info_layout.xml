@@ -13,6 +13,7 @@
             android:fillViewport="true" >
 
             <RelativeLayout
+                android:id="@+id/infoTxtContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/colorAccent"
@@ -24,6 +25,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textSize="@dimen/flight_info_menu_title_ts"
+                    android:textStyle="bold"
                     android:gravity="center_horizontal" />
 
                 <TextView
@@ -54,11 +56,19 @@
 
         </ScrollView>
 
+        <View
+            android:id="@+id/infoTxtShadow"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:visibility="gone"
+            android:background="@drawable/shadow_view_limit"
+            android:layout_below="@+id/directInfosScroll" />
+
         <com.google.android.gms.maps.MapView
             android:id="@+id/mapView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@+id/directInfosScroll" />
+            android:layout_below="@+id/infoTxtShadow" />
 
     </RelativeLayout>
 
@@ -70,7 +80,8 @@
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/expandable_menu_recycler"
-            android:background="@color/colorSecondary"
+            android:background="@drawable/shadow_view_limit"
+            android:paddingBottom="2dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 

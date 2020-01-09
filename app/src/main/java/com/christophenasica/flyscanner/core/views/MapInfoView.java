@@ -6,6 +6,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.RelativeLayout;
@@ -24,6 +25,7 @@ public class MapInfoView extends RelativeLayout {
     private RecyclerView mRecyclerView;
     private FloatingActionButton mExpandCollapseButton;
     private ScrollView mInfoScrollView;
+    private View mInfoShadow;
 
     private TextView mFlightName;
     private TextView mFlightAltitude;
@@ -51,6 +53,7 @@ public class MapInfoView extends RelativeLayout {
         mRecyclerView = findViewById(R.id.expandable_menu_recycler);
         mExpandCollapseButton = findViewById(R.id.expandCollapseButton);
         mInfoScrollView = findViewById(R.id.directInfosScroll);
+        mInfoShadow = findViewById(R.id.infoTxtShadow);
 
         mFlightName = findViewById(R.id.currentFlightNameTV);
         mFlightAltitude = findViewById(R.id.currentFlightAltitudeTV);
@@ -102,6 +105,10 @@ public class MapInfoView extends RelativeLayout {
 
     public ScrollView getInfoScrollView() {
         return mInfoScrollView;
+    }
+
+    public View getInfoShadow() {
+        return mInfoShadow;
     }
 
     public TextView getFlightName() {

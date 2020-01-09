@@ -5,6 +5,7 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -12,10 +13,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.christophenasica.flyscanner.R;
+import com.christophenasica.flyscanner.core.adapters.SearchListAdapter;
 import com.christophenasica.flyscanner.core.viewmodels.MainViewModel;
 import com.christophenasica.flyscanner.core.viewmodels.Repository;
-import com.christophenasica.flyscanner.core.activities.FlightMapActivity;
-import com.christophenasica.flyscanner.core.adapters.SearchListAdapter;
 import com.christophenasica.flyscanner.data.Flight;
 
 import java.util.ArrayList;
@@ -27,7 +27,7 @@ public class SearchResultFragment extends Fragment {
     public static final String FLIGHTS_PARAM = "flights";
 
     private RecyclerView mRecyclerView;
-    private RecyclerView.Adapter mAdapter;
+    private SearchListAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
 
     private List<Flight> mFlightsList = new ArrayList<>();
@@ -60,7 +60,12 @@ public class SearchResultFragment extends Fragment {
             @Override
             public void onChanged(@Nullable Flight flight) {
             if (flight != null) {
-                FlightMapActivity.startActivity(getActivity(), flight);
+                //FlightMapActivity.startActivity(getActivity(), flight);
+                if (getActivity() != null) {
+                    FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                    fragmentManager.beginTransaction().replace(R.id.searchFragmentContainer, MapFragment.newMapFragment(flight)).addToBackStack(null).commit();
+                    Repository.getInstance().getCurrentFlight().postValue(null); //todo frito mal de tête
+                }
             }
             }
         });

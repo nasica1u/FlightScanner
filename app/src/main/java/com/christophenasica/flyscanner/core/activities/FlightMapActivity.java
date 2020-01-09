@@ -2,27 +2,21 @@ package com.christophenasica.flyscanner.core.activities;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.support.v4.app.FragmentManager;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
 import android.view.View;
 import android.widget.Toast;
 
 import com.christophenasica.flyscanner.R;
-import com.christophenasica.flyscanner.core.NavigationUtils;
 import com.christophenasica.flyscanner.core.fragments.MapFragment;
-import com.christophenasica.flyscanner.core.fragments.SearchResultFragment;
 import com.christophenasica.flyscanner.data.Flight;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.OnMapReadyCallback;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class FlightMapActivity extends BaseNavbarActivity {
 
     private static final int ID = R.layout.activity_flight_map;
     public static final String FLIGHT_PARAM = "flight";
+
+    private Flight mFlight;
 
     public static void startActivity(Activity from, Flight flight) {
         if (flight != null) {
@@ -49,10 +43,15 @@ public class FlightMapActivity extends BaseNavbarActivity {
             }
         });
 
-        Flight flight = getIntent().getParcelableExtra(FLIGHT_PARAM);
-        if (flight != null) {
+        mFlight = getIntent().getParcelableExtra(FLIGHT_PARAM);
+
+        initBaseFragment();
+    }
+
+    private void initBaseFragment() {
+        if (mFlight != null) {
             FragmentManager fragmentManager = getSupportFragmentManager();
-            fragmentManager.beginTransaction().add(R.id.mapFragmentContainer, MapFragment.newMapFragment(flight)).commit();
+            fragmentManager.beginTransaction().add(R.id.mapFragmentContainer, MapFragment.newMapFragment(mFlight)).commit();
         }
     }
 

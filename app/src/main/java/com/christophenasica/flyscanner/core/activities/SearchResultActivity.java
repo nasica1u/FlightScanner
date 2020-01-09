@@ -4,15 +4,11 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
+import android.util.Log;
 import android.view.View;
 
 import com.christophenasica.flyscanner.R;
-import com.christophenasica.flyscanner.core.NavigationUtils;
 import com.christophenasica.flyscanner.core.fragments.SearchResultFragment;
-import com.christophenasica.flyscanner.data.Flight;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class SearchResultActivity extends BaseNavbarActivity {
 
@@ -33,12 +29,22 @@ public class SearchResultActivity extends BaseNavbarActivity {
         getNavBarLeftButton().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                onBackPressed();
+                Log.e("frito" , "avant : "+getSupportFragmentManager().getBackStackEntryCount());
+                if (getSupportFragmentManager().getBackStackEntryCount() == 0)
+                    onBackPressed();
+                else
+                    getSupportFragmentManager().popBackStack();
+                //getSupportFragmentManager().popBackStack();
+                Log.e("frito" , "après : "+getSupportFragmentManager().getBackStackEntryCount());
             }
         });
 
+        initBaseFragment();
+    }
+
+    private void initBaseFragment() {
         FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction().add(R.id.searchFragmentContainer, new SearchResultFragment()).commit();
+        fragmentManager.beginTransaction().add(R.id.searchFragmentContainer, new SearchResultFragment()).addToBackStack(null).commit();
     }
 
     @Override
