@@ -3,7 +3,6 @@ package com.christophenasica.flyscanner.core.views;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -21,8 +20,6 @@ public class SearchItemView extends RelativeLayout {
     private TextView mArrDate;
     private TextView mDepHour;
     private TextView mArrHour;
-
-    private View mSeparator;
 
     public SearchItemView(Context context) {
         super(context);
@@ -48,8 +45,6 @@ public class SearchItemView extends RelativeLayout {
         mArrDate = findViewById(R.id.itemTVArrDate);
         mDepHour = findViewById(R.id.itemTVDepHour);
         mArrHour = findViewById(R.id.itemTVArrHour);
-
-        mSeparator = findViewById(R.id.listSeparator);
     }
 
     private void initUI() {
@@ -89,9 +84,5 @@ public class SearchItemView extends RelativeLayout {
 
     public TextView getArrDate() {
         return mArrDate;
-    }
-
-    public View getSeparator() {
-        return mSeparator;
     }
 }

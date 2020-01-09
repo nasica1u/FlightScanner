@@ -17,6 +17,8 @@ public class MainViewModel extends AndroidViewModel {
     private MutableLiveData<List<Flight>> mCurrentFlights;
     private MutableLiveData<Boolean> mIsLoading;
 
+    private MutableLiveData<Flight> mCurrentFlight;
+
     public MainViewModel(Application application) {
         super(application);
         Repository repository = Repository.getInstance();
@@ -24,6 +26,7 @@ public class MainViewModel extends AndroidViewModel {
         mArrivalCalendar = repository.getArrivalCalendar();
         mCurrentFlights = repository.getCurrentFlights();
         mIsLoading = repository.getIsLoading();
+        mCurrentFlight = repository.getCurrentFlight();
     }
 
     public MutableLiveData<Calendar> getDepartureCalendar() {
@@ -40,5 +43,9 @@ public class MainViewModel extends AndroidViewModel {
 
     public MutableLiveData<Boolean> getIsLoading() {
         return mIsLoading;
+    }
+
+    public MutableLiveData<Flight> getCurrentFlight() {
+        return mCurrentFlight;
     }
 }

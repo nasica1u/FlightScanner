@@ -48,6 +48,16 @@ public class FlightMapActivity extends BaseNavbarActivity {
         initBaseFragment();
     }
 
+    @Override
+    protected void manageConnectionLost() {
+
+    }
+
+    @Override
+    protected void manageConnectionRetrieved() {
+
+    }
+
     private void initBaseFragment() {
         if (mFlight != null) {
             FragmentManager fragmentManager = getSupportFragmentManager();

@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.View;
 
 import com.christophenasica.flyscanner.R;
+import com.christophenasica.flyscanner.core.fragments.OutOfInternetFragment;
 import com.christophenasica.flyscanner.core.fragments.SearchResultFragment;
 
 public class SearchResultActivity extends BaseNavbarActivity {
@@ -29,26 +30,44 @@ public class SearchResultActivity extends BaseNavbarActivity {
         getNavBarLeftButton().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.e("frito" , "avant : "+getSupportFragmentManager().getBackStackEntryCount());
                 if (getSupportFragmentManager().getBackStackEntryCount() == 0)
                     onBackPressed();
                 else
                     getSupportFragmentManager().popBackStack();
-                //getSupportFragmentManager().popBackStack();
-                Log.e("frito" , "après : "+getSupportFragmentManager().getBackStackEntryCount());
             }
         });
 
         initBaseFragment();
     }
 
+    @Override
+    protected void manageConnectionLost() {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction().replace(R.id.searchFragmentContainer, new OutOfInternetFragment()).addToBackStack(null).commit();
+        getNavBarLeftButton().setVisibility(View.GONE);
+    }
+
+    @Override
+    protected void manageConnectionRetrieved() {
+        getNavBarLeftButton().setVisibility(View.VISIBLE);
+        getSupportFragmentManager().popBackStack();
+    }
+
     private void initBaseFragment() {
         FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction().add(R.id.searchFragmentContainer, new SearchResultFragment()).addToBackStack(null).commit();
+        fragmentManager.beginTransaction().add(R.id.searchFragmentContainer, new SearchResultFragment()).commit();
     }
 
     @Override
     protected int getContentLayoutId() {
         return ID;
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (mLastIsConnected)
+            super.onBackPressed();
+        else
+            finish();
     }
 }

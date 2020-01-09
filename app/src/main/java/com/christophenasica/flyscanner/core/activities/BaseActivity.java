@@ -35,9 +35,9 @@ public abstract class BaseActivity extends AppCompatActivity {
                 if (isConnected != null) {
                     if (mLastIsConnected != isConnected) {
                         if (!isConnected) {
-                            //manageConnectionLost();
+                            manageConnectionLost();
                         } else {
-                            //manageConnectionRetrieved();
+                            manageConnectionRetrieved();
                         }
                     }
                     mLastIsConnected = isConnected;
@@ -54,6 +54,6 @@ public abstract class BaseActivity extends AppCompatActivity {
             this.unregisterReceiver(networkReceiver);
     }
 
-    //protected abstract void manageConnectionLost();
-    //protected abstract void manageConnectionRetrieved();
+    protected abstract void manageConnectionLost();
+    protected abstract void manageConnectionRetrieved();
 }

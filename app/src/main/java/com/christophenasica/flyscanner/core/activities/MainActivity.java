@@ -44,8 +44,10 @@ public class MainActivity extends AppCompatActivity
         mConnectivityViewModel.getIsConnected().observe(this, new Observer<Boolean>() {
             @Override
             public void onChanged(@Nullable Boolean isConnected) {
-                if (isConnected != null && !isConnected) {
-                    Toast.makeText(getBaseContext(), getString(R.string.connection_lost), Toast.LENGTH_SHORT).show();
+                if (isConnected != null) {
+                    if (!isConnected) {
+                        Toast.makeText(getBaseContext(), getString(R.string.connection_lost), Toast.LENGTH_LONG).show();
+                    }
                 }
             }
         });

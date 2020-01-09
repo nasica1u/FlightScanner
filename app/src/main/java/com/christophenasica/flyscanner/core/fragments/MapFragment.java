@@ -79,7 +79,7 @@ public class MapFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final MapItemView mapItemView = new MapItemView(getContext());
 
-        mMapViewModel.getIsLoadingAircraftDetails().observe(this, new Observer<Boolean>() {
+        mMapViewModel.getIsLoadingAircraftDetails().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
             @Override
             public void onChanged(@Nullable Boolean isLoading) {
             if (isLoading != null) {
@@ -88,7 +88,7 @@ public class MapFragment extends Fragment {
             }
         });
 
-        mMapViewModel.getCurrentFlightPath().observe(this, new Observer<FlightPath>() {
+        mMapViewModel.getCurrentFlightPath().observe(getViewLifecycleOwner(), new Observer<FlightPath>() {
             @Override
             public void onChanged(@Nullable FlightPath flightPath) {
                 mFlightPath = flightPath;

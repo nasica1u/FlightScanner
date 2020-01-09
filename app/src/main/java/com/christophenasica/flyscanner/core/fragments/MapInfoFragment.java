@@ -73,7 +73,7 @@ public class MapInfoFragment extends Fragment {
         mAdapter = new FlightInfosAdapter(mFlights);
         mRecyclerView.setAdapter(mAdapter);
 
-        mMapViewModel.getFlightsInfoMenu().observe(this, new Observer<List<Flight>>() {
+        mMapViewModel.getFlightsInfoMenu().observe(getViewLifecycleOwner(), new Observer<List<Flight>>() {
             @Override
             public void onChanged(@Nullable List<Flight> flights) {
                 if (flights != null) {
@@ -83,7 +83,7 @@ public class MapInfoFragment extends Fragment {
                 }
             }
         });
-        mMapViewModel.getCurrentFlightState().observe(this, new Observer<FlightState>() {
+        mMapViewModel.getCurrentFlightState().observe(getViewLifecycleOwner(), new Observer<FlightState>() {
             @Override
             public void onChanged(@Nullable FlightState flightState) {
                 mFlightState = flightState;

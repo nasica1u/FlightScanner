@@ -36,4 +36,6 @@
     <string name="flight_descends_txt">Descends</string>
 
     <string name="no_internet_found">No internet found. Check your connection.</string>
+    <string name="out_of_internet_image">Out of internet image</string>
+    <string name="refresh">Refresh</string>
 </resources>

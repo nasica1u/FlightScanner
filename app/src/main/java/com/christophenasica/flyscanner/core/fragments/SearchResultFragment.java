@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +16,7 @@ import android.view.ViewGroup;
 import com.christophenasica.flyscanner.R;
 import com.christophenasica.flyscanner.core.adapters.SearchListAdapter;
 import com.christophenasica.flyscanner.core.viewmodels.MainViewModel;
+import com.christophenasica.flyscanner.core.viewmodels.MapViewModel;
 import com.christophenasica.flyscanner.core.viewmodels.Repository;
 import com.christophenasica.flyscanner.data.Flight;
 
@@ -23,8 +25,6 @@ import java.util.List;
 
 public class SearchResultFragment extends Fragment {
     private static final int ID = R.layout.search_result_fragment_layout;
-
-    public static final String FLIGHTS_PARAM = "flights";
 
     private RecyclerView mRecyclerView;
     private SearchListAdapter mAdapter;
@@ -53,10 +53,11 @@ public class SearchResultFragment extends Fragment {
         mLayoutManager = new LinearLayoutManager(getContext());
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        mAdapter = new SearchListAdapter(mFlightsList);
+        mAdapter = new SearchListAdapter(mFlightsList, mMainViewModel);
         mRecyclerView.setAdapter(mAdapter);
 
-        Repository.getInstance().getCurrentFlight().observe(this, new Observer<Flight>() {
+
+        mMainViewModel.getCurrentFlight().observe(getViewLifecycleOwner(), new Observer<Flight>() {
             @Override
             public void onChanged(@Nullable Flight flight) {
             if (flight != null) {
@@ -64,13 +65,14 @@ public class SearchResultFragment extends Fragment {
                 if (getActivity() != null) {
                     FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
                     fragmentManager.beginTransaction().replace(R.id.searchFragmentContainer, MapFragment.newMapFragment(flight)).addToBackStack(null).commit();
-                    Repository.getInstance().getCurrentFlight().postValue(null); //todo frito mal de tête
+                    mMainViewModel.getCurrentFlight().postValue(null); // reset value to navigate back on previous fragment
+                    Log.e("frito", "creartion du fragment buggé");
                 }
             }
             }
         });
 
-        mMainViewModel.getCurrentFlights().observe(this, new Observer<List<Flight>>() {
+        mMainViewModel.getCurrentFlights().observe(getViewLifecycleOwner(), new Observer<List<Flight>>() {
             @Override
             public void onChanged(@Nullable List<Flight> flights) {
                 if (flights != null) {

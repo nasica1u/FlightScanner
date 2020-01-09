@@ -4,12 +4,14 @@ import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.christophenasica.flyscanner.R;
 import com.christophenasica.flyscanner.core.ApplicationManager;
 import com.christophenasica.flyscanner.core.RequestManager;
+import com.christophenasica.flyscanner.core.viewmodels.MainViewModel;
 import com.christophenasica.flyscanner.core.viewmodels.Repository;
 import com.christophenasica.flyscanner.core.Utils;
 import com.christophenasica.flyscanner.core.views.SearchItemView;
@@ -19,9 +21,11 @@ import java.util.List;
 
 public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.SearchViewHolder> {
     private List<Flight> mFlightsList;
+    private MainViewModel mMainViewModel;
 
-    public SearchListAdapter(List<Flight> flights) {
+    public SearchListAdapter(List<Flight> flights, MainViewModel mainViewModel) {
         mFlightsList = flights;
+        mMainViewModel = mainViewModel;
     }
 
     @NonNull
@@ -35,7 +39,6 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Se
     public void onBindViewHolder(@NonNull SearchViewHolder viewHolder, int position) {
         SearchItemView view = viewHolder.searchItemView;
         if (mFlightsList != null && !mFlightsList.isEmpty()) {
-            //view.getSeparator().setVisibility(viewHolder.getAdapterPosition() != mFlightsList.size() - 1 ? View.VISIBLE : View.GONE);
             view.setBackgroundColor(position % 2 == 0 ? ContextCompat.getColor(ApplicationManager.getAppContext(), R.color.colorAccent) : Color.WHITE);
 
             final Flight flight = mFlightsList.get(position);
@@ -55,7 +58,7 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Se
                     public void onClick(View view) {
                     RequestManager.RequestInfos requestInfos = RequestManager.RequestInfos.initTracksInfos(flight.getFlightName(), flight.getDateArr());
                     RequestManager.getInstance().doGetRequestOnFlights(RequestManager.RequestType.TRACKS, requestInfos);
-                    Repository.getInstance().getCurrentFlight().postValue(flight);
+                    mMainViewModel.getCurrentFlight().postValue(flight);
                     }
                 });
             }

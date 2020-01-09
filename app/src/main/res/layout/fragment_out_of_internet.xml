@@ -9,14 +9,17 @@
     <ImageView
         android:id="@+id/noInternetIV"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/out_of_internet_image_height"
+        android:contentDescription="@string/out_of_internet_image"
         android:src="@drawable/disconnected" />
 
     <TextView
         android:id="@+id/noInternetTV"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_below="@id/noInternetIV"
+        android:textStyle="bold"
+        android:layout_centerHorizontal="true"
         android:text="@string/no_internet_found" />
 
 </RelativeLayout>
