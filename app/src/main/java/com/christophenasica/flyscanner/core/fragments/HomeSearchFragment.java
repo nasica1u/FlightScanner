@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -161,6 +162,8 @@ public class HomeSearchFragment extends Fragment {
                     DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(), departureDateSetListener, dCalendar.get(Calendar.YEAR), dCalendar.get(Calendar.MONTH), dCalendar.get(Calendar.DAY_OF_MONTH));
                     datePickerDialog.getDatePicker().setMaxDate(Calendar.getInstance().getTime().getTime());
                     datePickerDialog.show();
+                    datePickerDialog.getButton(DatePickerDialog.BUTTON_POSITIVE).setTextColor(ContextCompat.getColor(v.getContext(), R.color.colorPrimaryDark));
+                    datePickerDialog.getButton(DatePickerDialog.BUTTON_NEGATIVE).setTextColor(ContextCompat.getColor(v.getContext(), R.color.colorPrimaryDark));
                 }
             }
         });
@@ -176,6 +179,8 @@ public class HomeSearchFragment extends Fragment {
                     datePickerDialog.getDatePicker().setMinDate(getCalendarPlusXDays(dCalendar, 1).getTime().getTime()); // min date is one day after departure
                     datePickerDialog.getDatePicker().setMaxDate(Calendar.getInstance().getTime().getTime()); // max date is today date
                     datePickerDialog.show();
+                    datePickerDialog.getButton(DatePickerDialog.BUTTON_POSITIVE).setTextColor(ContextCompat.getColor(v.getContext(), R.color.colorPrimaryDark));
+                    datePickerDialog.getButton(DatePickerDialog.BUTTON_NEGATIVE).setTextColor(ContextCompat.getColor(v.getContext(), R.color.colorPrimaryDark));
                 }
             }
         });

@@ -65,7 +65,7 @@ public class MapInfoView extends RelativeLayout {
         LayoutInflater.from(getContext()).inflate(ID, this, true);
         bindViews();
 
-        //other init
+        mExpandCollapseButton.hide();
     }
 
     public void slideMenu(int value) {

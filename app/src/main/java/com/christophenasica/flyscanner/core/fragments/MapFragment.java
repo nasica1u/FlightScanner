@@ -53,7 +53,6 @@ public class MapFragment extends Fragment {
     private FlightPath mFlightPath;
     private MapView mMapView;
     private GoogleMap mGoogleMap;
-    private List<Marker> markers = new ArrayList<>();
 
     private boolean mShowDetails = true;
 
@@ -136,6 +135,7 @@ public class MapFragment extends Fragment {
             @Override
             public void onMapReady(GoogleMap googleMap) {
                 mGoogleMap = googleMap;
+                final List<Marker> markers = new ArrayList<>();
 
                 if (depAirport != null) {
                     LatLng dep = new LatLng(Double.parseDouble(depAirport.getLat()), Double.parseDouble(depAirport.getLon()));
@@ -152,14 +152,15 @@ public class MapFragment extends Fragment {
                     @Override
                     public void onMapLoaded() {
                         if (depAirport != null && arrAirport != null) { // Not zooming if one airport is null
-                            LatLngBounds.Builder builder = new LatLngBounds.Builder();
-                            for (Marker marker : markers) {
-                                builder.include(marker.getPosition());
+                            if (markers.size() > 0) {
+                                LatLngBounds.Builder builder = new LatLngBounds.Builder();
+                                for (Marker marker : markers) {
+                                    builder.include(marker.getPosition());
+                                }
+                                LatLngBounds bounds = builder.build();
+                                CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, 150);
+                                mGoogleMap.animateCamera(cameraUpdate);
                             }
-                            LatLngBounds bounds = builder.build();
-                            CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, 150);
-                            mGoogleMap.animateCamera(cameraUpdate);
-
                             updateAircraftPath(); // if map is loaded and has received no path update before
                         }
                     }
@@ -190,13 +191,6 @@ public class MapFragment extends Fragment {
                 mMapViewModel.getIsAircraftPathUpToDate().postValue(false); // declare path as not updated yet
             }
         }
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        Log.i(TAG, "Map being stopped");
-        markers.clear();
     }
 
     @Override

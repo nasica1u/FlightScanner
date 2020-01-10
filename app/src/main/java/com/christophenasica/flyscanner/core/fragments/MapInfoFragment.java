@@ -77,6 +77,8 @@ public class MapInfoFragment extends Fragment {
             @Override
             public void onChanged(@Nullable List<Flight> flights) {
                 if (flights != null) {
+                    if (!flights.isEmpty())
+                        view.getExpandCollapseButton().show();
                     mFlights.clear();
                     mFlights.addAll(flights);
                     mAdapter.notifyDataSetChanged();
