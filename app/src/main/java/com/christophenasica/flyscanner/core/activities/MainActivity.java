@@ -1,11 +1,9 @@
 package com.christophenasica.flyscanner.core.activities;
 
-import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -14,12 +12,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import com.christophenasica.flyscanner.R;
-import com.christophenasica.flyscanner.core.viewmodels.ConnectivityViewModel;
 import com.christophenasica.flyscanner.core.NetworkReceiver;
 import com.christophenasica.flyscanner.core.fragments.HomeSearchFragment;
+import com.christophenasica.flyscanner.core.viewmodels.ConnectivityViewModel;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -40,17 +37,6 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle("");
         setSupportActionBar(toolbar);
-
-        mConnectivityViewModel.getIsConnected().observe(this, new Observer<Boolean>() {
-            @Override
-            public void onChanged(@Nullable Boolean isConnected) {
-                if (isConnected != null) {
-                    if (!isConnected) {
-                        Toast.makeText(getBaseContext(), getString(R.string.connection_lost), Toast.LENGTH_LONG).show();
-                    }
-                }
-            }
-        });
 
         // Swipe menu
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

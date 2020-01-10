@@ -22,6 +22,7 @@ import android.widget.Toast;
 
 import com.christophenasica.flyscanner.R;
 import com.christophenasica.flyscanner.core.AirportManager;
+import com.christophenasica.flyscanner.core.viewmodels.ConnectivityViewModel;
 import com.christophenasica.flyscanner.core.viewmodels.MainViewModel;
 import com.christophenasica.flyscanner.core.RequestManager;
 import com.christophenasica.flyscanner.core.Utils;
@@ -41,11 +42,14 @@ public class HomeSearchFragment extends Fragment {
     private final SavedInfos mSavedInfos = new SavedInfos();
 
     private MainViewModel mMainViewModel;
+    private ConnectivityViewModel mConnectivityViewModel;
+    private boolean lastIsConnected = true;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mMainViewModel = ViewModelProviders.of(this).get(MainViewModel.class);
+        mConnectivityViewModel = ViewModelProviders.of(this).get(ConnectivityViewModel.class);
     }
 
     @Nullable
@@ -58,6 +62,25 @@ public class HomeSearchFragment extends Fragment {
             mSavedInfos.icaoFrom = defaultIcao;
             mSavedInfos.icaoTo = defaultIcao;
         }
+
+        mConnectivityViewModel.getIsConnected().observe(this, new Observer<Boolean>() {
+            @Override
+            public void onChanged(@Nullable Boolean isConnected) {
+                if (isConnected != null) {
+                    if (!isConnected) {
+                        Toast.makeText(getContext(), getString(R.string.connection_lost), Toast.LENGTH_LONG).show();
+                        rootView.getSearchButton().setEnabled(false);
+                    }
+                    else {
+                        if (!lastIsConnected) {
+                            Toast.makeText(getContext(), getString(R.string.connection_found), Toast.LENGTH_LONG).show();
+                            rootView.getSearchButton().setEnabled(true);
+                        }
+                    }
+                    lastIsConnected = isConnected;
+                }
+            }
+        });
 
         mMainViewModel.getDepartureCalendar().postValue(getCalendarPlusXDays(Calendar.getInstance(), -7));
         mMainViewModel.getArrivalCalendar().postValue(getCalendarPlusXDays(Calendar.getInstance(), -1));

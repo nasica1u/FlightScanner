@@ -16,7 +16,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class RequestManager {
@@ -200,7 +202,7 @@ public class RequestManager {
     }
 
     public void doGetRequestOnFlights(RequestType requestType, RequestInfos requestInfos) {
-        new RequestAsyncTask(requestType, requestInfos).execute();
+        RequestAsyncTask.newRequestAsyncTask(requestType, requestInfos).execute();
     }
 
     public static class RequestInfos {
@@ -242,12 +244,6 @@ public class RequestManager {
             return requestInfos;
         }
 
-        public RequestInfos(int begin, int end, String icao24) {
-            this.icao24 = icao24;
-            this.begin = begin;
-            this.end = end;
-        }
-
         @NonNull
         @Override
         public String toString() {
@@ -266,9 +262,23 @@ public class RequestManager {
         private RequestType mRequestType;
         private RequestInfos mRequestInfos;
 
-        public RequestAsyncTask(RequestType requestType, RequestInfos requestInfos) {
+        private static List<RequestAsyncTask> mCurrentTasks = new ArrayList<>();
+
+        private RequestAsyncTask(RequestType requestType, RequestInfos requestInfos) {
             mRequestType = requestType;
             mRequestInfos = requestInfos;
+        }
+
+        public static RequestAsyncTask newRequestAsyncTask(RequestType requestType, RequestInfos requestInfos) {
+            RequestAsyncTask requestAsyncTask = new RequestAsyncTask(requestType, requestInfos);
+            mCurrentTasks.add(requestAsyncTask);
+            return requestAsyncTask;
+        }
+
+        public static void cancelRunningTasks() {
+            for (RequestAsyncTask task : mCurrentTasks) {
+                task.cancel(true);
+            }
         }
 
         @Override
@@ -324,6 +334,7 @@ public class RequestManager {
                 default:
                     Log.e(TAG, "Request["+mRequestType+"]: request type not found!");
             }
+            mCurrentTasks.remove(this);
         }
     }
 }

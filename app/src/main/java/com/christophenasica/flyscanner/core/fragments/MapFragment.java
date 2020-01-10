@@ -15,9 +15,7 @@ import android.view.ViewGroup;
 import com.christophenasica.flyscanner.R;
 import com.christophenasica.flyscanner.core.RequestManager;
 import com.christophenasica.flyscanner.core.Utils;
-import com.christophenasica.flyscanner.core.activities.FlightMapActivity;
 import com.christophenasica.flyscanner.core.viewmodels.MapViewModel;
-import com.christophenasica.flyscanner.core.viewmodels.Repository;
 import com.christophenasica.flyscanner.core.views.MapItemView;
 import com.christophenasica.flyscanner.data.Airport;
 import com.christophenasica.flyscanner.data.Flight;
@@ -47,19 +45,24 @@ public class MapFragment extends Fragment {
 
     private static final String TAG = MapFragment.class.getSimpleName();
 
+    public static final String FLIGHT_PARAM = "flight";
+
     private MapViewModel mMapViewModel;
 
     private Flight mFlight;
     private FlightPath mFlightPath;
     private MapView mMapView;
     private GoogleMap mGoogleMap;
+    private List<Marker> markers = new ArrayList<>();
 
     private boolean mShowDetails = true;
+
+
 
     public static MapFragment newMapFragment(Flight flight) {
         MapFragment fragment = new MapFragment();
         Bundle args = new Bundle();
-        args.putParcelable(FlightMapActivity.FLIGHT_PARAM, flight);
+        args.putParcelable(FLIGHT_PARAM, flight);
         fragment.setArguments(args);
         return fragment;
     }
@@ -69,7 +72,7 @@ public class MapFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         if (getArguments() != null) {
-            mFlight = getArguments().getParcelable(FlightMapActivity.FLIGHT_PARAM);
+            mFlight = getArguments().getParcelable(FLIGHT_PARAM);
         }
 
         mMapViewModel = ViewModelProviders.of(this).get(MapViewModel.class);
@@ -78,6 +81,8 @@ public class MapFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final MapItemView mapItemView = new MapItemView(getContext());
+
+        mMapViewModel.getIsAircraftPathUpToDate().postValue(false);
 
         mMapViewModel.getIsLoadingAircraftDetails().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
             @Override
@@ -101,7 +106,7 @@ public class MapFragment extends Fragment {
             public void onClick(View view) {
                 mShowDetails = !mShowDetails;
                 mMapViewModel.getIsLoadingAircraftDetails().postValue(true);
-                if (getActivity() != null && getActivity().getSupportFragmentManager() != null && mFlight != null) {
+                if (getActivity() != null && mFlight != null) {
                     getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.searchFragmentContainer, new MapInfoFragment()).addToBackStack(null).commit();
                     RequestManager.RequestInfos requestInfos = RequestManager.RequestInfos.initStatesInfos(mFlight.getFlightName());
                     RequestManager.getInstance().doGetRequestOnFlights(RequestManager.RequestType.STATES, requestInfos);
@@ -128,7 +133,6 @@ public class MapFragment extends Fragment {
             @Override
             public void onMapReady(GoogleMap googleMap) {
                 mGoogleMap = googleMap;
-                final List<Marker> markers = new ArrayList<>();
 
                 if (depAirport != null && arrAirport != null) {
                     LatLng dep = new LatLng(Double.parseDouble(depAirport.getLat()), Double.parseDouble(depAirport.getLon()));
@@ -145,6 +149,8 @@ public class MapFragment extends Fragment {
                     markers.add(googleMap.addMarker(new MarkerOptions().position(arr).title(arrAirport.getName()).icon(BitmapDescriptorFactory.fromResource(R.drawable.airplane_landing))));
                 }
 
+                updateAircraftPath(); // to draw back the path if you navigate through fragments
+
                 mGoogleMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
                     @Override
                     public void onMapLoaded() {
@@ -157,9 +163,7 @@ public class MapFragment extends Fragment {
                             CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, 150);
                             mGoogleMap.animateCamera(cameraUpdate);
 
-                            if (mMapViewModel.getIsAircraftPathUpToDate().getValue() != null && !mMapViewModel.getIsAircraftPathUpToDate().getValue()) {
-                                updateAircraftPath();
-                            }
+                            updateAircraftPath(); // if map is loaded and has received no path update before
                         }
                     }
                 });
@@ -170,24 +174,32 @@ public class MapFragment extends Fragment {
     }
 
     private void updateAircraftPath() {
-        if (mGoogleMap != null && mFlightPath != null) {
-            List<String[]> path = mFlightPath.getPath();
-            List<LatLng> pathLatLng = new ArrayList<>();
-            for (String[] p : path) {
-                try {
-                    LatLng latLng = new LatLng(Float.parseFloat(p[1]), Float.parseFloat(p[2]));
-                    pathLatLng.add(latLng);
-                } catch (NumberFormatException e) {
-                    Log.e(TAG, e.getMessage());
+        if (mMapViewModel.getIsAircraftPathUpToDate().getValue() != null && !mMapViewModel.getIsAircraftPathUpToDate().getValue()) { // if needs to be updated only
+            if (mGoogleMap != null && mFlightPath != null) {
+                List<String[]> path = mFlightPath.getPath();
+                List<LatLng> pathLatLng = new ArrayList<>();
+                for (String[] p : path) {
+                    try {
+                        LatLng latLng = new LatLng(Float.parseFloat(p[1]), Float.parseFloat(p[2]));
+                        pathLatLng.add(latLng);
+                    } catch (NumberFormatException e) {
+                        Log.e(TAG, e.getMessage());
+                    }
                 }
+                List<PatternItem> patternItems = Arrays.asList(new Dot(), new Gap(10), new Dash(30), new Gap(10));
+                mGoogleMap.addPolyline(new PolylineOptions().addAll(pathLatLng).color(Color.DKGRAY).pattern(patternItems));
+                mMapViewModel.getIsAircraftPathUpToDate().postValue(true);
+            } else {
+                mMapViewModel.getIsAircraftPathUpToDate().postValue(false);
             }
-            List<PatternItem> patternItems = Arrays.asList(new Dot(), new Gap(10), new Dash(30), new Gap(10));
-            mGoogleMap.addPolyline(new PolylineOptions().addAll(pathLatLng).color(Color.DKGRAY).pattern(patternItems));
-            mMapViewModel.getIsAircraftPathUpToDate().postValue(true);
         }
-        else {
-            mMapViewModel.getIsAircraftPathUpToDate().postValue(false);
-        }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        Log.i(TAG, "Map being stopped");
+        markers.clear();
     }
 
     @Override
@@ -212,6 +224,5 @@ public class MapFragment extends Fragment {
     public void onDestroy() {
         super.onDestroy();
         mMapView.onDestroy();
-        Repository.getInstance().getIsAircraftPathUpToDate().postValue(true);
     }
 }

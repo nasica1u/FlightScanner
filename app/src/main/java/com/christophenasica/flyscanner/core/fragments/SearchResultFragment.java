@@ -8,15 +8,14 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.christophenasica.flyscanner.R;
+import com.christophenasica.flyscanner.core.RequestManager;
 import com.christophenasica.flyscanner.core.adapters.SearchListAdapter;
 import com.christophenasica.flyscanner.core.viewmodels.MainViewModel;
-import com.christophenasica.flyscanner.core.viewmodels.MapViewModel;
 import com.christophenasica.flyscanner.core.viewmodels.Repository;
 import com.christophenasica.flyscanner.data.Flight;
 
@@ -56,17 +55,18 @@ public class SearchResultFragment extends Fragment {
         mAdapter = new SearchListAdapter(mFlightsList, mMainViewModel);
         mRecyclerView.setAdapter(mAdapter);
 
+        RequestManager.RequestAsyncTask.cancelRunningTasks(); // reset all running AsyncTask to prevent invalid datas
+        Repository.getInstance().getCurrentFlightPath().postValue(null); // reset current navigation path
+        Repository.getInstance().getCurrentFlightState().postValue(null); // reset current navigation state
 
         mMainViewModel.getCurrentFlight().observe(getViewLifecycleOwner(), new Observer<Flight>() {
             @Override
             public void onChanged(@Nullable Flight flight) {
             if (flight != null) {
-                //FlightMapActivity.startActivity(getActivity(), flight);
                 if (getActivity() != null) {
                     FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
                     fragmentManager.beginTransaction().replace(R.id.searchFragmentContainer, MapFragment.newMapFragment(flight)).addToBackStack(null).commit();
                     mMainViewModel.getCurrentFlight().postValue(null); // reset value to navigate back on previous fragment
-                    Log.e("frito", "creartion du fragment buggé");
                 }
             }
             }
