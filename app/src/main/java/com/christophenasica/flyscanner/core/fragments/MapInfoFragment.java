@@ -108,7 +108,7 @@ public class MapInfoFragment extends Fragment {
                             .getMetrics(metrics);
                     height = metrics.heightPixels / 2;
                 }
-                view.slideMenu(isExpanded ? 0 : height);
+                view.slideMenu(isExpanded ? 0 : height); // animation to expand/collapse the history menu
                 isExpanded = !isExpanded;
             }
         });

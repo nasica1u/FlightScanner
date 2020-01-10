@@ -19,6 +19,7 @@
     <string name="flight_number_label">Flight n°</string>
 
     <string name="alert_interval_too_big">Interval should not be higher than 7 days</string>
+    <string name="alert_departure_bigger_than_arrival">Departure date should be before arrival date</string>
 
     <string name="connection_lost">Connection lost.</string>
     <string name="connection_found">Connection found.</string>

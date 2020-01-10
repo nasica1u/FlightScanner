@@ -107,16 +107,19 @@ public class MapFragment extends Fragment {
                 mShowDetails = !mShowDetails;
                 mMapViewModel.getIsLoadingAircraftDetails().postValue(true);
                 if (getActivity() != null && mFlight != null) {
+                    // Launch direct info map screen
                     getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.searchFragmentContainer, new MapInfoFragment()).addToBackStack(null).commit();
+                    // Prepare and launch states request for direct infos
                     RequestManager.RequestInfos requestInfos = RequestManager.RequestInfos.initStatesInfos(mFlight.getFlightName());
                     RequestManager.getInstance().doGetRequestOnFlights(RequestManager.RequestType.STATES, requestInfos);
 
-                    // Launch request to show list of flights for the aircraft
+                    // Launch request to show list of flights for the aircraft (history)
                     Calendar today = Calendar.getInstance();
                     Calendar threeDaysAgo = Calendar.getInstance();
                     int end = (int) (today.getTimeInMillis() / 1000);
-                    threeDaysAgo.add(Calendar.DAY_OF_WEEK, -3);
+                    threeDaysAgo.add(Calendar.DAY_OF_WEEK, -3); // taking last 3 days period
                     int begin = (int) (threeDaysAgo.getTimeInMillis() / 1000);
+                    // Launch history request
                     RequestManager.RequestInfos requestInfos2 = RequestManager.RequestInfos.initHistoryInfos(mFlight.getFlightName(), begin, end);
                     RequestManager.getInstance().doGetRequestOnFlights(RequestManager.RequestType.FLIGHTS_BY_AIRCRAFT, requestInfos2);
                 }
@@ -134,19 +137,13 @@ public class MapFragment extends Fragment {
             public void onMapReady(GoogleMap googleMap) {
                 mGoogleMap = googleMap;
 
-                if (depAirport != null && arrAirport != null) {
+                if (depAirport != null) {
                     LatLng dep = new LatLng(Double.parseDouble(depAirport.getLat()), Double.parseDouble(depAirport.getLon()));
-                    LatLng arr = new LatLng(Double.parseDouble(arrAirport.getLat()), Double.parseDouble(arrAirport.getLon()));
-                    markers.add(googleMap.addMarker(new MarkerOptions().position(dep).title(depAirport.getName()).icon(BitmapDescriptorFactory.fromResource(R.drawable.airplane_take_off))));
-                    markers.add(googleMap.addMarker(new MarkerOptions().position(arr).title(arrAirport.getName()).icon(BitmapDescriptorFactory.fromResource(R.drawable.airplane_landing))));
+                    markers.add(googleMap.addMarker(new MarkerOptions().position(dep).title(depAirport.getName()).icon(BitmapDescriptorFactory.fromResource(R.drawable.airplane_take_off)))); // add departure airport marker on map
                 }
-                else if (depAirport != null) {
-                    LatLng dep = new LatLng(Double.parseDouble(depAirport.getLat()), Double.parseDouble(depAirport.getLon()));
-                    markers.add(googleMap.addMarker(new MarkerOptions().position(dep).title(depAirport.getName()).icon(BitmapDescriptorFactory.fromResource(R.drawable.airplane_take_off))));
-                }
-                else if (arrAirport != null) {
+                if (arrAirport != null) {
                     LatLng arr = new LatLng(Double.parseDouble(arrAirport.getLat()), Double.parseDouble(arrAirport.getLon()));
-                    markers.add(googleMap.addMarker(new MarkerOptions().position(arr).title(arrAirport.getName()).icon(BitmapDescriptorFactory.fromResource(R.drawable.airplane_landing))));
+                    markers.add(googleMap.addMarker(new MarkerOptions().position(arr).title(arrAirport.getName()).icon(BitmapDescriptorFactory.fromResource(R.drawable.airplane_landing)))); // add arrival airport marker on map
                 }
 
                 updateAircraftPath(); // to draw back the path if you navigate through fragments
@@ -180,17 +177,17 @@ public class MapFragment extends Fragment {
                 List<LatLng> pathLatLng = new ArrayList<>();
                 for (String[] p : path) {
                     try {
-                        LatLng latLng = new LatLng(Float.parseFloat(p[1]), Float.parseFloat(p[2]));
+                        LatLng latLng = new LatLng(Float.parseFloat(p[1]), Float.parseFloat(p[2])); // create LatLng instance per path point
                         pathLatLng.add(latLng);
                     } catch (NumberFormatException e) {
                         Log.e(TAG, e.getMessage());
                     }
                 }
                 List<PatternItem> patternItems = Arrays.asList(new Dot(), new Gap(10), new Dash(30), new Gap(10));
-                mGoogleMap.addPolyline(new PolylineOptions().addAll(pathLatLng).color(Color.DKGRAY).pattern(patternItems));
-                mMapViewModel.getIsAircraftPathUpToDate().postValue(true);
+                mGoogleMap.addPolyline(new PolylineOptions().addAll(pathLatLng).color(Color.DKGRAY).pattern(patternItems)); // convert points into a polyline
+                mMapViewModel.getIsAircraftPathUpToDate().postValue(true); // declare path as up to date
             } else {
-                mMapViewModel.getIsAircraftPathUpToDate().postValue(false);
+                mMapViewModel.getIsAircraftPathUpToDate().postValue(false); // declare path as not updated yet
             }
         }
     }

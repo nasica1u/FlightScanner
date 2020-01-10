@@ -40,5 +40,9 @@ public abstract class BaseNavbarActivity extends BaseActivity {
         return mNavBarRightButton;
     }
 
+    /**
+     * Returns int representing layout resource
+     * @return has to return the activity layout
+     */
     protected abstract int getContentLayoutId();
 }

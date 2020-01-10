@@ -41,7 +41,6 @@ public abstract class BaseActivity extends AppCompatActivity {
                         }
                     }
                     mLastIsConnected = isConnected;
-                    //Toast.makeText(getBaseContext(), getString(R.string.connection_lost), Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -54,6 +53,13 @@ public abstract class BaseActivity extends AppCompatActivity {
             this.unregisterReceiver(networkReceiver);
     }
 
+    /**
+     * Called when connection is lost
+     */
     protected abstract void manageConnectionLost();
+
+    /**
+     * Called when connection is retrieved
+     */
     protected abstract void manageConnectionRetrieved();
 }

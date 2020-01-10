@@ -63,33 +63,34 @@ public class HomeSearchFragment extends Fragment {
             mSavedInfos.icaoTo = defaultIcao;
         }
 
+        // Home connectivity management
         mConnectivityViewModel.getIsConnected().observe(this, new Observer<Boolean>() {
             @Override
             public void onChanged(@Nullable Boolean isConnected) {
                 if (isConnected != null) {
-                    if (!isConnected) {
+                    if (!isConnected) { // Not connected : we show a toast and disable the "search" button
                         Toast.makeText(getContext(), getString(R.string.connection_lost), Toast.LENGTH_LONG).show();
                         rootView.getSearchButton().setEnabled(false);
                     }
                     else {
-                        if (!lastIsConnected) {
+                        if (!lastIsConnected) { // Connected and last connection state is offline : we show a connection found toast and then enable the search button
                             Toast.makeText(getContext(), getString(R.string.connection_found), Toast.LENGTH_LONG).show();
                             rootView.getSearchButton().setEnabled(true);
                         }
                     }
-                    lastIsConnected = isConnected;
+                    lastIsConnected = isConnected; // update last registered state
                 }
             }
         });
 
-        mMainViewModel.getDepartureCalendar().postValue(getCalendarPlusXDays(Calendar.getInstance(), -7));
-        mMainViewModel.getArrivalCalendar().postValue(getCalendarPlusXDays(Calendar.getInstance(), -1));
+        mMainViewModel.getDepartureCalendar().postValue(getCalendarPlusXDays(Calendar.getInstance(), -7)); // init Departure calendar to CurrentDate - 7 days
+        mMainViewModel.getArrivalCalendar().postValue(getCalendarPlusXDays(Calendar.getInstance(), -1)); // init Arrival calendar to CurrentDate - 1 day
 
         mMainViewModel.getDepartureCalendar().observe(this, new Observer<Calendar>() {
             @Override
             public void onChanged(@Nullable Calendar dCalendar) {
                 if (dCalendar != null) {
-                    updateDateLabel(rootView.getFromPickerEditText(), dCalendar.getTime());
+                    updateDateLabel(rootView.getFromPickerEditText(), dCalendar.getTime()); // update shown Departure date
                 }
             }
         });
@@ -98,7 +99,7 @@ public class HomeSearchFragment extends Fragment {
             @Override
             public void onChanged(@Nullable Calendar aCalendar) {
                 if (aCalendar != null)
-                    updateDateLabel(rootView.getToPickerEditText(), aCalendar.getTime());
+                    updateDateLabel(rootView.getToPickerEditText(), aCalendar.getTime()); // update shown Arrival date
             }
         });
 
@@ -106,8 +107,8 @@ public class HomeSearchFragment extends Fragment {
             @Override
             public void onChanged(@Nullable List<Flight> flights) {
                 if (flights != null) {
-                    mMainViewModel.getIsLoading().postValue(false);
-                    SearchResultActivity.startActivity(getActivity());
+                    mMainViewModel.getIsLoading().postValue(false); // cancel loading value to disable the progress bar
+                    SearchResultActivity.startActivity(getActivity()); // Start search activity when Flights (list) retrieved from API request
                 }
             }
         });
@@ -116,8 +117,8 @@ public class HomeSearchFragment extends Fragment {
             @Override
             public void onChanged(@Nullable Boolean isLoading) {
                 if (isLoading != null) {
-                    rootView.getLoadingSpinner().setVisibility(isLoading ? View.VISIBLE : View.GONE);
-                    rootView.getSearchButton().setEnabled(!isLoading);
+                    rootView.getLoadingSpinner().setVisibility(isLoading ? View.VISIBLE : View.GONE); // show/hide the progress bar depending on loading state
+                    rootView.getSearchButton().setEnabled(!isLoading); // disable the search button when is loading the List
                 }
             }
         });
@@ -125,7 +126,7 @@ public class HomeSearchFragment extends Fragment {
         rootView.getFromToSwitch().setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                rootView.getDropdown().setSelection(getDropdownIndexByIcao(isChecked ? mSavedInfos.icaoTo : mSavedInfos.icaoFrom));
+                rootView.getDropdown().setSelection(getDropdownIndexByIcao(isChecked ? mSavedInfos.icaoTo : mSavedInfos.icaoFrom)); // Departure/Arrival switch state change (retrieve last entered airport and set the corresponding selection)
             }
         });
 
@@ -136,7 +137,7 @@ public class HomeSearchFragment extends Fragment {
                 dCalendar.set(Calendar.YEAR, year);
                 dCalendar.set(Calendar.MONTH, month);
                 dCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-                mMainViewModel.getDepartureCalendar().postValue(dCalendar);
+                mMainViewModel.getDepartureCalendar().postValue(dCalendar); // post selected date in picker for Departure
             }
         };
 
@@ -147,7 +148,7 @@ public class HomeSearchFragment extends Fragment {
                 aCalendar.set(Calendar.YEAR, year);
                 aCalendar.set(Calendar.MONTH, month);
                 aCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-                mMainViewModel.getArrivalCalendar().postValue(aCalendar);
+                mMainViewModel.getArrivalCalendar().postValue(aCalendar); // post selected date in picker for Departure
             }
         };
 
@@ -156,6 +157,7 @@ public class HomeSearchFragment extends Fragment {
             public void onClick(View v) {
                 Calendar dCalendar = mMainViewModel.getDepartureCalendar().getValue();
                 if (dCalendar != null) {
+                    // Create departure picker with current displayed date selected
                     DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(), departureDateSetListener, dCalendar.get(Calendar.YEAR), dCalendar.get(Calendar.MONTH), dCalendar.get(Calendar.DAY_OF_MONTH));
                     datePickerDialog.getDatePicker().setMaxDate(Calendar.getInstance().getTime().getTime());
                     datePickerDialog.show();
@@ -169,8 +171,10 @@ public class HomeSearchFragment extends Fragment {
                 Calendar aCalendar = mMainViewModel.getArrivalCalendar().getValue();
                 Calendar dCalendar = mMainViewModel.getDepartureCalendar().getValue();
                 if (aCalendar != null && dCalendar != null) {
+                    // Create arrival picker with current displayed date selected
                     DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(), arrivalDateSetListener, aCalendar.get(Calendar.YEAR), aCalendar.get(Calendar.MONTH), aCalendar.get(Calendar.DAY_OF_MONTH));
-                    datePickerDialog.getDatePicker().setMinDate(getCalendarPlusXDays(dCalendar, -1).getTime().getTime());
+                    datePickerDialog.getDatePicker().setMinDate(getCalendarPlusXDays(dCalendar, 1).getTime().getTime()); // min date is one day after departure
+                    datePickerDialog.getDatePicker().setMaxDate(Calendar.getInstance().getTime().getTime()); // max date is today date
                     datePickerDialog.show();
                 }
             }
@@ -185,7 +189,7 @@ public class HomeSearchFragment extends Fragment {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 boolean isCheckedSwitch = rootView.getFromToSwitch().isChecked();
                 String icao = AirportManager.getInstance().getAirportList().get(position).getIcao();
-                if (isCheckedSwitch) {
+                if (isCheckedSwitch) { // saving departure and arrival icao to set them when clicking on the switch (Arrival-Departure)
                     mSavedInfos.icaoTo = icao;
                 }
                 else {
@@ -205,20 +209,30 @@ public class HomeSearchFragment extends Fragment {
                 Calendar dCalendar = mMainViewModel.getDepartureCalendar().getValue();
                 Calendar aCalendar = mMainViewModel.getArrivalCalendar().getValue();
 
+                // Getting the selected dropdown item and get its icao
                 String icao = AirportManager.getInstance().getAirportList().get(rootView.getDropdown().getSelectedItemPosition()).getIcao();
+                // Depending on switch state, starts Departure or Arrival request
                 RequestManager.RequestType requestType = rootView.getFromToSwitch().isChecked() ? RequestManager.RequestType.ARRIVAL : RequestManager.RequestType.DEPARTURE;
 
+                // Checking calendar / icao validity
                 if (dCalendar != null && aCalendar != null && Utils.isStringValid(icao)) {
-                    if (HomeSearchFragment.this.getCalendarPlusXDays(dCalendar, 7).getTimeInMillis() > aCalendar.getTimeInMillis()) {
-                        int begin = (int) (dCalendar.getTimeInMillis() / 1000);
-                        int end = (int) (aCalendar.getTimeInMillis() / 1000);
+                    // Checking that departure date is not bigger than arrival date
+                    if (dCalendar.getTime().getTime() < aCalendar.getTime().getTime()) {
+                        // Checking that interval is max 7 days between departure and arrival
+                        if (HomeSearchFragment.this.getCalendarPlusXDays(dCalendar, 7).getTimeInMillis() > aCalendar.getTimeInMillis()) {
+                            int begin = (int) (dCalendar.getTimeInMillis() / 1000); // conversion needed for the API
+                            int end = (int) (aCalendar.getTimeInMillis() / 1000); // conversion needed for the API
 
-                        RequestManager.RequestInfos requestInfos = RequestManager.RequestInfos.initSearchInfos(icao, begin, end);
-                        RequestManager.getInstance().doGetRequestOnFlights(requestType, requestInfos);
-                        mMainViewModel.getIsLoading().postValue(true);
+                            // Starting the request
+                            RequestManager.RequestInfos requestInfos = RequestManager.RequestInfos.initSearchInfos(icao, begin, end);
+                            RequestManager.getInstance().doGetRequestOnFlights(requestType, requestInfos);
+                            mMainViewModel.getIsLoading().postValue(true); // activate loading progress bar
+                        } else {
+                            Toast.makeText(getContext(), R.string.alert_interval_too_big, Toast.LENGTH_LONG).show();
+                        }
                     }
                     else {
-                        Toast.makeText(getContext(), R.string.alert_interval_too_big, Toast.LENGTH_LONG).show();
+                        Toast.makeText(getContext(), R.string.alert_departure_bigger_than_arrival, Toast.LENGTH_LONG).show();
                     }
                 }
                 else {
@@ -230,6 +244,12 @@ public class HomeSearchFragment extends Fragment {
         return rootView;
     }
 
+    /**
+     * Method that get a Calendar and add to its dates X days
+     * @param from base Calendar to add days
+     * @param nbDays the number of days you want to add to the Calendar
+     * @return Base Calendar incremented by nbDays
+     */
     private Calendar getCalendarPlusXDays(Calendar from, int nbDays) {
         Calendar datePlusX = Calendar.getInstance();
         datePlusX.setTime(from.getTime());
@@ -237,6 +257,11 @@ public class HomeSearchFragment extends Fragment {
         return datePlusX;
     }
 
+    /**
+     * Searches in dropdown the airport that matches the given icao
+     * @param icao icao to compare with
+     * @return Dropdown index of the airport that corresponds to the icao
+     */
     private int getDropdownIndexByIcao(String icao) {
         List<Airport> airportsList = AirportManager.getInstance().getAirportList();
         for (int i=0; i < airportsList.size(); i++) {

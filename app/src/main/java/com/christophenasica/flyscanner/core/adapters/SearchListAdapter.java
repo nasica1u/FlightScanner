@@ -4,16 +4,14 @@ import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.christophenasica.flyscanner.R;
 import com.christophenasica.flyscanner.core.ApplicationManager;
 import com.christophenasica.flyscanner.core.RequestManager;
-import com.christophenasica.flyscanner.core.viewmodels.MainViewModel;
-import com.christophenasica.flyscanner.core.viewmodels.Repository;
 import com.christophenasica.flyscanner.core.Utils;
+import com.christophenasica.flyscanner.core.viewmodels.MainViewModel;
 import com.christophenasica.flyscanner.core.views.SearchItemView;
 import com.christophenasica.flyscanner.data.Flight;
 
@@ -39,7 +37,7 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Se
     public void onBindViewHolder(@NonNull SearchViewHolder viewHolder, int position) {
         SearchItemView view = viewHolder.searchItemView;
         if (mFlightsList != null && !mFlightsList.isEmpty()) {
-            view.setBackgroundColor(position % 2 == 0 ? ContextCompat.getColor(ApplicationManager.getAppContext(), R.color.colorAccent) : Color.WHITE);
+            view.setBackgroundColor(position % 2 == 0 ? ContextCompat.getColor(ApplicationManager.getAppContext(), R.color.colorAccent) : Color.WHITE); // alternate cell background color for distinction
 
             final Flight flight = mFlightsList.get(position);
             if (flight != null) {
@@ -56,9 +54,10 @@ public class SearchListAdapter extends RecyclerView.Adapter<SearchListAdapter.Se
                 view.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                    RequestManager.RequestInfos requestInfos = RequestManager.RequestInfos.initTracksInfos(flight.getFlightName(), flight.getDateArr());
-                    RequestManager.getInstance().doGetRequestOnFlights(RequestManager.RequestType.TRACKS, requestInfos);
-                    mMainViewModel.getCurrentFlight().postValue(flight);
+                        // Launching tracking info request : flight Path
+                        RequestManager.RequestInfos requestInfos = RequestManager.RequestInfos.initTracksInfos(flight.getFlightName(), flight.getDateArr());
+                        RequestManager.getInstance().doGetRequestOnFlights(RequestManager.RequestType.TRACKS, requestInfos);
+                        mMainViewModel.getCurrentFlight().postValue(flight); // used to retrieve clicked Flight item
                     }
                 });
             }

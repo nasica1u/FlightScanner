@@ -8,7 +8,6 @@ import android.net.NetworkInfo;
 import android.util.Log;
 
 import com.christophenasica.flyscanner.core.viewmodels.ConnectivityViewModel;
-import com.christophenasica.flyscanner.core.viewmodels.Repository;
 
 public class NetworkReceiver extends BroadcastReceiver {
 
@@ -26,11 +25,11 @@ public class NetworkReceiver extends BroadcastReceiver {
         NetworkInfo networkInfo = conn.getActiveNetworkInfo();
 
         if (networkInfo != null) {
-            Repository.getInstance().getIsConnected().postValue(true);
+            connectivityViewModel.getIsConnected().postValue(true);
             Log.i(TAG, "Connection found.");
         }
         else {
-            Repository.getInstance().getIsConnected().postValue(false);
+            connectivityViewModel.getIsConnected().postValue(false);
             Log.i(TAG, "Connection Lost.");
         }
     }
